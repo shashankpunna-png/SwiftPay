@@ -10,33 +10,9 @@
 		65ECBEB730933F590090DAFF /* Swiftpay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swiftpay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		65ECBEC8309343100090DAFF /* Exceptions for "Swiftpay" folder in "Swiftpay" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				.gitignore,
-			);
-			target = 65ECBEB630933F590090DAFF /* Swiftpay */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		65ECBEC9309343100090DAFF /* Exceptions for "Swiftpay" folder in "Compile Sources" phase from "Swiftpay" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 65ECBEB330933F590090DAFF /* Sources */;
-			membershipExceptions = (
-				.gitignore,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		65ECBEB930933F590090DAFF /* Swiftpay */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				65ECBEC8309343100090DAFF /* Exceptions for "Swiftpay" folder in "Swiftpay" target */,
-				65ECBEC9309343100090DAFF /* Exceptions for "Swiftpay" folder in "Compile Sources" phase from "Swiftpay" target */,
-			);
 			path = Swiftpay;
 			sourceTree = "<group>";
 		};
