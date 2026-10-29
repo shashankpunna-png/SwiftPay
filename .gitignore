@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+
+# Xcode user data and debugging
+xcuserdata/
+xcdebugger/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+*.hmap
+
+# Build outputs
+DerivedData/
+build/
+Build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+.build/
+
+# Carthage
+Carthage/Build/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Sensitive configuration
+.env
+.env.*
+GoogleService-Info.plist
+.cursor/mcp.json
