@@ -10,9 +10,33 @@
 		65ECBEB730933F590090DAFF /* Swiftpay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swiftpay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		65ECBED030933F590090DAFF /* Exceptions for "Swiftpay" folder in "Swiftpay" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Core/Components/.gitkeep,
+				Core/Utilities/.gitkeep,
+				Data/LocalStorage/.gitkeep,
+				Data/Remote/.gitkeep,
+				Data/Repositories/.gitkeep,
+				Domain/Models/.gitkeep,
+				Domain/Repositories/.gitkeep,
+				Domain/UseCases/.gitkeep,
+				Presentation/Home/.gitkeep,
+				Presentation/Profile/.gitkeep,
+				Presentation/Transactions/.gitkeep,
+				Presentation/Transfer/.gitkeep,
+			);
+			target = 65ECBEB630933F590090DAFF /* Swiftpay */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		65ECBEB930933F590090DAFF /* Swiftpay */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				65ECBED030933F590090DAFF /* Exceptions for "Swiftpay" folder in "Swiftpay" target */,
+			);
 			path = Swiftpay;
 			sourceTree = "<group>";
 		};
