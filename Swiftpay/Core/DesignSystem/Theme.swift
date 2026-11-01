@@ -20,6 +20,8 @@ enum Theme {
         static let successBackground = Color(hex: 0xDCFCE7)
         static let error = Color(hex: 0xDC2626)
         static let errorBackground = Color(hex: 0xFEE2E2)
+        static let warning = Color(hex: 0xCA8A04)
+        static let warningBackground = Color(hex: 0xFEF9C3)
     }
 
     enum Spacing {

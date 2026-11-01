@@ -21,7 +21,7 @@ struct SplashView: View {
     var body: some View {
         Group {
             if showMain {
-                TransactionsView()
+                TransactionDetailView()
             } else {
                 SplashScreen()
             }
