@@ -2,34 +2,50 @@ import SwiftUI
 import UIKit
 
 extension View {
-    func allowsSwipeBack() -> some View {
+    func allowsSwipeBack(_ isEnabled: Bool = true) -> some View {
         background {
-            SwipeBackEnabler()
+            SwipeBackEnabler(isEnabled: isEnabled)
         }
     }
 }
 
 private struct SwipeBackEnabler: UIViewControllerRepresentable {
+    var isEnabled: Bool
+
     func makeUIViewController(context: Context) -> Controller {
-        Controller()
+        Controller(isEnabled: isEnabled)
     }
 
-    func updateUIViewController(_ uiViewController: Controller, context: Context) {}
+    func updateUIViewController(_ uiViewController: Controller, context: Context) {
+        uiViewController.isEnabled = isEnabled
+        uiViewController.apply()
+    }
 
     final class Controller: UIViewController {
+        var isEnabled: Bool
+
+        init(isEnabled: Bool) {
+            self.isEnabled = isEnabled
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        required init?(coder: NSCoder) {
+            nil
+        }
+
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-            enableSwipe()
+            apply()
         }
 
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
-            enableSwipe()
+            apply()
         }
 
-        private func enableSwipe() {
+        func apply() {
             guard let navigationController else { return }
-            SwipeBack.install(on: navigationController)
+            SwipeBack.install(on: navigationController, isEnabled: isEnabled)
         }
     }
 }
@@ -37,10 +53,10 @@ private struct SwipeBackEnabler: UIViewControllerRepresentable {
 private enum SwipeBack {
     private static var delegateKey: UInt8 = 0
 
-    static func install(on navigationController: UINavigationController) {
+    static func install(on navigationController: UINavigationController, isEnabled: Bool) {
         let delegate = storedDelegate(for: navigationController)
         guard let gesture = navigationController.interactivePopGestureRecognizer else { return }
-        gesture.isEnabled = true
+        gesture.isEnabled = isEnabled
         gesture.delegate = delegate
     }
 

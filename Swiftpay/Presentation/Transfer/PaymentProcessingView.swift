@@ -6,11 +6,16 @@ struct PaymentProcessingView: View {
     var amountText = "₹480.00"
     var accountDetail = "SwiftPay Wallet ••3210"
     var referenceID = "SP429910482190"
-
-    @State private var isSpinning = false
+    var onFinished: () -> Void = {}
 
     var body: some View {
         processing
+            .toolbar(.hidden, for: .navigationBar)
+            .task {
+                try? await Task.sleep(for: .seconds(3))
+                guard !Task.isCancelled else { return }
+                onFinished()
+            }
     }
 
     private var processing: some View {
@@ -90,30 +95,32 @@ struct PaymentProcessingView: View {
         .padding(Theme.Spacing.md)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.Colors.background)
-        .onAppear {
-            isSpinning = true
-        }
     }
 
     private var spinner: some View {
-        ZStack {
-            Circle()
-                .stroke(Theme.Colors.tertiary, lineWidth: 4)
-            Circle()
-                .trim(from: 0, to: 0.28)
-                .stroke(
-                    Theme.Colors.primary,
-                    style: StrokeStyle(lineWidth: 4, lineCap: .round)
-                )
-                .rotationEffect(.degrees(isSpinning ? 360 : 0))
-                .animation(.linear(duration: 0.9).repeatForever(autoreverses: false), value: isSpinning)
+        TimelineView(.animation) { timeline in
+            let period = 0.9
+            let elapsed = timeline.date.timeIntervalSinceReferenceDate
+            let angle = (elapsed.truncatingRemainder(dividingBy: period) / period) * 360
 
-            Image(systemName: "lock.fill")
-                .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(Theme.Colors.primary)
-                .frame(width: 48, height: 48)
-                .background(Theme.Colors.tertiary)
-                .clipShape(Circle())
+            ZStack {
+                Circle()
+                    .stroke(Theme.Colors.tertiary, lineWidth: 4)
+                Circle()
+                    .trim(from: 0, to: 0.28)
+                    .stroke(
+                        Theme.Colors.primary,
+                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(angle))
+
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(Theme.Colors.primary)
+                    .frame(width: 48, height: 48)
+                    .background(Theme.Colors.tertiary)
+                    .clipShape(Circle())
+            }
         }
         .frame(width: 80, height: 80)
         .accessibilityLabel("Processing payment")

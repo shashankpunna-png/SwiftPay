@@ -8,6 +8,9 @@ struct ReviewStepView: View {
     var recipientUPI = "swiggy.orders@swiftpay"
     var walletName = "SwiftPay Wallet"
     var walletDetail = "Aarav Shah ••3210"
+    var onConfirm: () -> Void = {}
+
+    @Environment(\.dismiss) private var dismiss
 
     private var total: Decimal { amount + fee }
 
@@ -56,10 +59,16 @@ struct ReviewStepView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Theme.Colors.background)
+        .toolbar(.hidden, for: .navigationBar)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            AppButton(title: "Confirm pay \(money(total))", systemImage: "lock.fill") {}
-                .padding(Theme.Spacing.md)
-                .background(Theme.Colors.background)
+            HStack(spacing: Theme.Spacing.gutter) {
+                AppButton(title: "Back", systemImage: "chevron.left", style: .secondary) {
+                    dismiss()
+                }
+                AppButton(title: "Confirm pay", systemImage: "lock.fill", action: onConfirm)
+            }
+            .padding(Theme.Spacing.md)
+            .background(Theme.Colors.background)
         }
     }
 

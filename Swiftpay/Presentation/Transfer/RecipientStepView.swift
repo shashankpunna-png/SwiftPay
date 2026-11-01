@@ -1,9 +1,10 @@
 import SwiftUI
 
 struct RecipientStepView: View {
-    @State private var name = ""
-    @State private var phone = ""
-    @State private var upiID = ""
+    @Binding var name: String
+    @Binding var phone: String
+    @Binding var upiID: String
+    var onContinue: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -33,7 +34,7 @@ struct RecipientStepView: View {
                         capitalization: .never
                     )
 
-                    AppButton(title: "Continue") {}
+                    AppButton(title: "Continue", action: onContinue)
                 }
                 .padding(Theme.Spacing.md)
                 .padding(.bottom, Theme.Spacing.lg)
@@ -45,5 +46,15 @@ struct RecipientStepView: View {
 }
 
 #Preview {
-    RecipientStepView()
+    RecipientStepPreview()
+}
+
+private struct RecipientStepPreview: View {
+    @State private var name = ""
+    @State private var phone = ""
+    @State private var upiID = ""
+
+    var body: some View {
+        RecipientStepView(name: $name, phone: $phone, upiID: $upiID) {}
+    }
 }

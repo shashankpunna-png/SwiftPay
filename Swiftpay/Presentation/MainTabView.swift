@@ -11,13 +11,10 @@ struct MainTabView: View {
                 Label("Home", systemImage: "house.fill")
             }
 
-            NavigationStack {
-                RecipientStepView()
-                    .toolbar(.hidden, for: .navigationBar)
-            }
-            .tabItem {
-                Label("Transfer", systemImage: "paperplane.fill")
-            }
+            TransferFlowView()
+                .tabItem {
+                    Label("Transfer", systemImage: "paperplane.fill")
+                }
 
             NavigationStack {
                 TransactionsView()

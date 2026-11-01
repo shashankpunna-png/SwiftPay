@@ -2,10 +2,13 @@ import SwiftUI
 
 struct AmountStepView: View {
     var name: String
+    var phone: String
     var upiID: String
+    @Binding var amountText: String
+    var onProceed: () -> Void
 
-    @State private var amountText = "0"
     @FocusState private var isAmountFocused: Bool
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack(spacing: 0) {
@@ -55,12 +58,15 @@ struct AmountStepView: View {
         .background(Theme.Colors.background)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             HStack(spacing: Theme.Spacing.gutter) {
-                AppButton(title: "Back", systemImage: "chevron.left", style: .secondary) {}
-                AppButton(title: "Proceed") {}
+                AppButton(title: "Back", systemImage: "chevron.left", style: .secondary) {
+                    dismiss()
+                }
+                AppButton(title: "Proceed", action: onProceed)
             }
             .padding(Theme.Spacing.md)
             .background(Theme.Colors.background)
         }
+        .toolbar(.hidden, for: .navigationBar)
         .onAppear {
             isAmountFocused = true
         }
@@ -99,5 +105,18 @@ struct AmountStepView: View {
 }
 
 #Preview {
-    AmountStepView(name: "Swiggy", upiID: "swiggy.orders@swiftpay")
+    AmountStepPreview()
+}
+
+private struct AmountStepPreview: View {
+    @State private var amountText = "0"
+
+    var body: some View {
+        AmountStepView(
+            name: "Swiggy",
+            phone: "9988776655",
+            upiID: "swiggy.orders@swiftpay",
+            amountText: $amountText
+        ) {}
+    }
 }
