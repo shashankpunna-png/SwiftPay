@@ -64,11 +64,12 @@ struct TransactionRow: View {
 
 struct TransactionList: View {
     let transactions: [TransactionItem]
+    var onSelect: ((TransactionItem) -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(Array(transactions.enumerated()), id: \.element.id) { index, item in
-                TransactionRow(item: item)
+                row(for: item)
                 if index < transactions.count - 1 {
                     Rectangle()
                         .fill(Theme.Colors.divider)
@@ -81,5 +82,19 @@ struct TransactionList: View {
             Theme.Colors.surface,
             in: RoundedRectangle(cornerRadius: Theme.Radius.hero, style: .continuous)
         )
+    }
+
+    @ViewBuilder
+    private func row(for item: TransactionItem) -> some View {
+        if let onSelect {
+            Button {
+                onSelect(item)
+            } label: {
+                TransactionRow(item: item)
+            }
+            .buttonStyle(.plain)
+        } else {
+            TransactionRow(item: item)
+        }
     }
 }

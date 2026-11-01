@@ -5,6 +5,7 @@ struct TransactionsView: View {
     @State private var kindFilter = TransactionListFilter.all
     @State private var dateRange: ClosedRange<Date>?
     @State private var isDateSheetPresented = false
+    @State private var selectedTransaction: TransactionItem?
 
     private var filteredTransactions: [TransactionItem] {
         let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -35,7 +36,9 @@ struct TransactionsView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.top, Theme.Spacing.xl)
                 } else {
-                    TransactionList(transactions: filteredTransactions)
+                    TransactionList(transactions: filteredTransactions) { item in
+                        selectedTransaction = item
+                    }
                         .padding(.horizontal, Theme.Spacing.md)
                         .padding(.top, Theme.Spacing.md)
                         .padding(.bottom, Theme.Spacing.lg)
@@ -44,6 +47,9 @@ struct TransactionsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Theme.Colors.background)
+        .navigationDestination(item: $selectedTransaction) { item in
+            TransactionDetailView(receipt: PaymentReceipt(item: item))
+        }
         .sheet(isPresented: $isDateSheetPresented) {
             DateRangeSheet(range: dateRange) { range in
                 dateRange = range

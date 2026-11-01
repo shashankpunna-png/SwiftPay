@@ -22,13 +22,16 @@ struct TransactionItem: Identifiable, Hashable {
         date.formatted(.dateTime.day().month(.abbreviated).hour().minute())
     }
 
+    var amountText: String {
+        Self.currency.string(from: NSDecimalNumber(decimal: amount)) ?? "₹0.00"
+    }
+
     var signedAmount: String {
-        let formatted = Self.currency.string(from: NSDecimalNumber(decimal: amount)) ?? "₹0.00"
         switch kind {
         case .credit:
-            return "+ \(formatted)"
+            return "+ \(amountText)"
         case .debit:
-            return "− \(formatted)"
+            return "− \(amountText)"
         }
     }
 

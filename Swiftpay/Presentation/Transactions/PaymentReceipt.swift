@@ -1,3 +1,5 @@
+import Foundation
+
 struct PaymentReceipt {
     var result: PaymentResult
     var amount: String
@@ -56,4 +58,28 @@ struct PaymentReceipt {
         transactionID: "SP429910482190",
         feeText: "₹0.00"
     )
+}
+
+extension PaymentReceipt {
+    init(item: TransactionItem) {
+        self.init(
+            result: item.kind == .credit ? .credit : .debit,
+            amount: item.amountText,
+            dateText: item.dateText,
+            counterpartyName: item.title,
+            counterpartyDetail: Self.upiID(for: item.title),
+            accountName: "SwiftPay Wallet",
+            accountDetail: "Aarav Shah ••3210",
+            transactionID: "SP\(item.id.uuidString.prefix(12))",
+            feeText: "₹0.00"
+        )
+    }
+
+    private static func upiID(for name: String) -> String {
+        let slug = name
+            .lowercased()
+            .replacingOccurrences(of: " ", with: ".")
+            .filter { $0.isLetter || $0 == "." }
+        return "\(slug)@swiftpay"
+    }
 }
