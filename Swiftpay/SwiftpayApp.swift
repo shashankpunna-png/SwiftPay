@@ -11,7 +11,7 @@ import SwiftUI
 struct SwiftpayApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
         }
     }
 }
