@@ -3,7 +3,7 @@ import SwiftUI
 struct SplashScreen: View {
     var body: some View {
         ZStack {
-            Theme.Colors.primary
+            Theme.Colors.background
                 .ignoresSafeArea()
 
             Image("LaunchLogo")
