@@ -2,6 +2,8 @@ import SwiftUI
 
 struct RecentTransactionsSection: View {
     let transactions: [TransactionItem]
+    var onSeeAll: () -> Void = {}
+    var onSelect: (TransactionItem) -> Void = { _ in }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -10,7 +12,7 @@ struct RecentTransactionsSection: View {
                     .font(Theme.Typography.headlineSmall)
                     .foregroundStyle(Theme.Colors.neutral)
                 Spacer()
-                Button(action: {}) {
+                Button(action: onSeeAll) {
                     HStack(spacing: 2) {
                         Text("See all")
                         Image(systemName: "chevron.right")
@@ -22,7 +24,7 @@ struct RecentTransactionsSection: View {
                 .buttonStyle(.plain)
             }
 
-            TransactionList(transactions: transactions)
+            TransactionList(transactions: transactions, onSelect: onSelect)
         }
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.top, Theme.Spacing.lg)
