@@ -14,8 +14,6 @@
 		65ECBED030933F590090DAFF /* Exceptions for "Swiftpay" folder in "Swiftpay" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
-				Core/Components/.gitkeep,
 				Core/Utilities/.gitkeep,
 				Data/LocalStorage/.gitkeep,
 				Data/Remote/.gitkeep,
@@ -23,6 +21,7 @@
 				Domain/Models/.gitkeep,
 				Domain/Repositories/.gitkeep,
 				Domain/UseCases/.gitkeep,
+				Info.plist,
 				Presentation/Home/.gitkeep,
 				Presentation/Profile/.gitkeep,
 				Presentation/Transactions/.gitkeep,
