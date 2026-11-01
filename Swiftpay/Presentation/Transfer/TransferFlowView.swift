@@ -46,6 +46,7 @@ struct TransferFlowView: View {
                         recipientName: name,
                         recipientPhone: phone,
                         recipientUPI: upiID,
+                        walletDetail: UserProfileStore.shared.accountDetail,
                         onConfirm: { path.append(.processing) }
                     )
                     .allowsSwipeBack(false)
@@ -54,7 +55,7 @@ struct TransferFlowView: View {
                         recipientName: name,
                         recipientPhone: phone,
                         amountText: money(total),
-                        accountDetail: "Aarav Shah ••3210",
+                        accountDetail: UserProfileStore.shared.accountDetail,
                         referenceID: "SP429910482190",
                         onFinished: { showReceipt() }
                     )
@@ -79,7 +80,7 @@ struct TransferFlowView: View {
             counterpartyName: name,
             counterpartyDetail: upiID,
             accountName: "SwiftPay Wallet",
-            accountDetail: "Aarav Shah ••3210",
+            accountDetail: UserProfileStore.shared.accountDetail,
             transactionID: "SP429910482190",
             feeText: money(fee)
         )

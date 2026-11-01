@@ -69,7 +69,7 @@ extension PaymentReceipt {
             counterpartyName: item.title,
             counterpartyDetail: Self.upiID(for: item.title),
             accountName: "SwiftPay Wallet",
-            accountDetail: "Aarav Shah ••3210",
+            accountDetail: UserProfileStore.shared.accountDetail,
             transactionID: "SP\(item.id.uuidString.prefix(12))",
             feeText: "₹0.00"
         )

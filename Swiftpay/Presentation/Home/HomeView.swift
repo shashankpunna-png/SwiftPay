@@ -4,8 +4,9 @@ struct HomeView: View {
     var onSendMoney: () -> Void = {}
     var onShowTransactions: () -> Void = {}
 
-    @State private var isBalanceHidden = false
     @State private var selectedTransaction: TransactionItem?
+
+    private var profile: UserProfileStore { .shared }
 
     private var recentTransactions: [TransactionItem] {
         Array(SampleTransactions.newestFirst.prefix(5))
@@ -16,8 +17,8 @@ struct HomeView: View {
             AppTopBar()
             ScrollView {
                 VStack(spacing: 0) {
-                    HomeGreeting(name: "Aarav", upiID: "aarav.shah@swiftpay")
-                    BalanceCard(amount: "₹10,000.00", isHidden: $isBalanceHidden)
+                    HomeGreeting(name: profile.givenName, upiID: profile.upiID)
+                    BalanceCard(amount: profile.formattedBalance, isHidden: hidesBalance)
                         .padding(.horizontal, Theme.Spacing.md)
                         .padding(.top, Theme.Spacing.sm)
 
@@ -47,6 +48,13 @@ struct HomeView: View {
         .navigationDestination(item: $selectedTransaction) { item in
             TransactionDetailView(receipt: PaymentReceipt(item: item))
         }
+    }
+
+    private var hidesBalance: Binding<Bool> {
+        Binding(
+            get: { !profile.showsBalanceOnLaunch },
+            set: { profile.showsBalanceOnLaunch = !$0 }
+        )
     }
 }
 

@@ -8,6 +8,7 @@ enum AppTab: Hashable {
 
 struct MainTabView: View {
     @State private var selectedTab = AppTab.home
+    @State private var showProfile = false
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -39,6 +40,12 @@ struct MainTabView: View {
             .tag(AppTab.transactions)
         }
         .tint(Theme.Colors.primary)
+        .environment(\.openProfile) {
+            showProfile = true
+        }
+        .fullScreenCover(isPresented: $showProfile) {
+            ProfileView()
+        }
     }
 }
 

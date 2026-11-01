@@ -1,9 +1,10 @@
 import SwiftUI
 
 struct AppTopBar: View {
-    var initials: String = "AS"
-    var onProfileTap: () -> Void = {}
     var onNotificationsTap: () -> Void = {}
+
+    @Environment(\.openProfile) private var openProfile
+    private var profile: UserProfileStore { .shared }
 
     var body: some View {
         ZStack {
@@ -29,16 +30,29 @@ struct AppTopBar: View {
     }
 
     private var profileButton: some View {
-        Button(action: onProfileTap) {
-            Text(initials)
+        Button(action: openProfile) {
+            profileAvatar
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Profile")
+    }
+
+    @ViewBuilder
+    private var profileAvatar: some View {
+        if let image = profile.image {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 40, height: 40)
+                .clipShape(Circle())
+        } else {
+            Text(profile.initials)
                 .font(Theme.Typography.labelLarge)
                 .foregroundStyle(Theme.Colors.primary)
                 .frame(width: 40, height: 40)
                 .background(Theme.Colors.tertiary)
                 .clipShape(Circle())
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Profile")
     }
 
     private var notificationsButton: some View {
