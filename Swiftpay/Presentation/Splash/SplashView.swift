@@ -21,7 +21,7 @@ struct SplashView: View {
     var body: some View {
         Group {
             if showMain {
-                AmountStepView(name: "Swiggy", upiID: "swiggy.orders@swiftpay")
+                ReviewStepView()
             } else {
                 SplashScreen()
             }
