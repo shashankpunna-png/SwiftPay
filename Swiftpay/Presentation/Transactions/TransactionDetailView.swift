@@ -28,6 +28,7 @@ struct TransactionDetailView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Theme.Colors.background)
         .toolbar(.hidden, for: .navigationBar)
+        .allowsSwipeBack()
     }
 }
 
