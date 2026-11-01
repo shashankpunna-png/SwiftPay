@@ -6,6 +6,13 @@ struct TransactionsView: View {
     @State private var dateRange: ClosedRange<Date>?
     @State private var isDateSheetPresented = false
 
+    private var filteredTransactions: [TransactionItem] {
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        return SampleTransactions.newestFirst.filter { item in
+            matches(item, query: trimmedQuery)
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             AppTopBar()
@@ -19,6 +26,21 @@ struct TransactionsView: View {
             )
             .padding(.horizontal, Theme.Spacing.md)
             .padding(.top, Theme.Spacing.sm)
+
+            ScrollView {
+                if filteredTransactions.isEmpty {
+                    Text("No transactions")
+                        .font(Theme.Typography.bodyMedium)
+                        .foregroundStyle(Theme.Colors.textSecondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, Theme.Spacing.xl)
+                } else {
+                    TransactionList(transactions: filteredTransactions)
+                        .padding(.horizontal, Theme.Spacing.md)
+                        .padding(.top, Theme.Spacing.md)
+                        .padding(.bottom, Theme.Spacing.lg)
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Theme.Colors.background)
@@ -29,6 +51,20 @@ struct TransactionsView: View {
                 dateRange = nil
             }
         }
+    }
+
+    private func matches(_ item: TransactionItem, query: String) -> Bool {
+        let matchesQuery = query.isEmpty || item.title.localizedCaseInsensitiveContains(query)
+        let matchesKind = switch kindFilter {
+        case .all:
+            true
+        case .credit:
+            item.kind == .credit
+        case .debit:
+            item.kind == .debit
+        }
+        let matchesDate = dateRange?.contains(item.date) ?? true
+        return matchesQuery && matchesKind && matchesDate
     }
 }
 
