@@ -70,6 +70,7 @@ struct TransferFlowView: View {
     private func showReceipt() {
         guard let index = path.lastIndex(of: .processing) else { return }
         path[index] = .receipt
+        PaymentFeedback.playSuccess()
     }
 
     private var receipt: PaymentReceipt {

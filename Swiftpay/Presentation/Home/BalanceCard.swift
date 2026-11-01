@@ -14,7 +14,11 @@ struct BalanceCard: View {
                 Spacer()
 
                 Button {
+                    let wasHidden = isHidden
                     isHidden.toggle()
+                    if wasHidden {
+                        PaymentFeedback.playCoins()
+                    }
                 } label: {
                     Image(systemName: isHidden ? "eye.slash" : "eye")
                         .font(.system(size: 18, weight: .medium))
