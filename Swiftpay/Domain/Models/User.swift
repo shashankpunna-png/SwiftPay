@@ -8,6 +8,7 @@ struct User: Equatable, Sendable {
     var walletBalance: Decimal
     var currency: String
     var photoUrl: String?
+    var photoUpdatedAt: Date? = nil
     var photoData: Data?
 
     var givenName: String {
