@@ -7,9 +7,8 @@ struct User: Equatable, Sendable {
     var upiId: String
     var walletBalance: Decimal
     var currency: String
-    var photoUrl: String?
-    var photoUpdatedAt: Date? = nil
-    var photoData: Data?
+    var photoFile: String?
+    var photoUpdatedAt: String?
 
     var givenName: String {
         name.split(separator: " ").first.map(String.init) ?? name

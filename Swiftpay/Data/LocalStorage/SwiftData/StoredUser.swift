@@ -9,9 +9,8 @@ final class StoredUser {
     var upiId: String
     var walletBalance: Decimal
     var currency: String
-    var photoUrl: String?
-    var photoUpdatedAt: Date?
-    @Attribute(.externalStorage) var photoData: Data?
+    var photoFile: String?
+    var photoUpdatedAt: String?
 
     init(user: User) {
         id = user.id
@@ -20,9 +19,8 @@ final class StoredUser {
         upiId = user.upiId
         walletBalance = user.walletBalance
         currency = user.currency
-        photoUrl = user.photoUrl
+        photoFile = user.photoFile
         photoUpdatedAt = user.photoUpdatedAt
-        photoData = user.photoData
     }
 
     func fill(from user: User) {
@@ -31,9 +29,8 @@ final class StoredUser {
         upiId = user.upiId
         walletBalance = user.walletBalance
         currency = user.currency
-        photoUrl = user.photoUrl
+        photoFile = user.photoFile
         photoUpdatedAt = user.photoUpdatedAt
-        photoData = user.photoData
     }
 
     var user: User {
@@ -44,9 +41,8 @@ final class StoredUser {
             upiId: upiId,
             walletBalance: walletBalance,
             currency: currency,
-            photoUrl: photoUrl,
-            photoUpdatedAt: photoUpdatedAt,
-            photoData: photoData
+            photoFile: photoFile,
+            photoUpdatedAt: photoUpdatedAt
         )
     }
 }
