@@ -4,9 +4,10 @@ struct HomeView: View {
     var onSendMoney: () -> Void = {}
     var onShowTransactions: () -> Void = {}
 
+    @Environment(\.userDetails) private var userDetails
     @State private var selectedTransaction: TransactionItem?
 
-    private var profile: UserProfileStore { .shared }
+    private var user: User? { userDetails?.user }
 
     private var recentTransactions: [TransactionItem] {
         Array(SampleTransactions.newestFirst.prefix(5))
@@ -17,8 +18,8 @@ struct HomeView: View {
             AppTopBar()
             ScrollView {
                 VStack(spacing: 0) {
-                    HomeGreeting(name: profile.givenName, upiID: profile.upiID)
-                    BalanceCard(amount: profile.formattedBalance, isHidden: hidesBalance)
+                    HomeGreeting(name: user?.givenName ?? "", upiID: user?.upiId ?? "")
+                    BalanceCard(amount: user?.formattedBalance ?? "₹0.00", isHidden: hidesBalance)
                         .padding(.horizontal, Theme.Spacing.md)
                         .padding(.top, Theme.Spacing.sm)
 
@@ -46,18 +47,19 @@ struct HomeView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Theme.Colors.background)
         .navigationDestination(item: $selectedTransaction) { item in
-            TransactionDetailView(receipt: PaymentReceipt(item: item))
+            TransactionDetailView(receipt: PaymentReceipt(item: item, accountDetail: user?.accountDetail ?? ""))
         }
     }
 
     private var hidesBalance: Binding<Bool> {
         Binding(
-            get: { !profile.showsBalanceOnLaunch },
-            set: { profile.showsBalanceOnLaunch = !$0 }
+            get: { !(userDetails?.showsBalanceOnLaunch ?? true) },
+            set: { userDetails?.showsBalanceOnLaunch = !$0 }
         )
     }
 }
 
 #Preview {
     HomeView()
+        .environment(\.userDetails, UserDetailsViewModel.preview)
 }

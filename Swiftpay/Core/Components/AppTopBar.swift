@@ -4,7 +4,7 @@ struct AppTopBar: View {
     var onNotificationsTap: () -> Void = {}
 
     @Environment(\.openProfile) private var openProfile
-    private var profile: UserProfileStore { .shared }
+    @Environment(\.userDetails) private var userDetails
 
     var body: some View {
         ZStack {
@@ -39,14 +39,14 @@ struct AppTopBar: View {
 
     @ViewBuilder
     private var profileAvatar: some View {
-        if let image = profile.image {
+        if let image = userDetails?.photo {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
                 .frame(width: 40, height: 40)
                 .clipShape(Circle())
         } else {
-            Text(profile.initials)
+            Text(userDetails?.user?.initials ?? "?")
                 .font(Theme.Typography.labelLarge)
                 .foregroundStyle(Theme.Colors.primary)
                 .frame(width: 40, height: 40)
@@ -75,4 +75,5 @@ struct AppTopBar: View {
 
 #Preview {
     AppTopBar()
+        .environment(\.userDetails, UserDetailsViewModel.preview)
 }

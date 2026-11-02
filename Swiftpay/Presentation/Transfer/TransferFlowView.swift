@@ -8,6 +8,7 @@ enum TransferRoute: Hashable {
 }
 
 struct TransferFlowView: View {
+    @Environment(\.userDetails) private var userDetails
     @State private var path: [TransferRoute] = []
     @State private var name = ""
     @State private var phone = ""
@@ -46,7 +47,7 @@ struct TransferFlowView: View {
                         recipientName: name,
                         recipientPhone: phone,
                         recipientUPI: upiID,
-                        walletDetail: UserProfileStore.shared.accountDetail,
+                        walletDetail: userDetails?.user?.accountDetail ?? "",
                         onConfirm: { path.append(.processing) }
                     )
                     .allowsSwipeBack(false)
@@ -55,7 +56,7 @@ struct TransferFlowView: View {
                         recipientName: name,
                         recipientPhone: phone,
                         amountText: money(total),
-                        accountDetail: UserProfileStore.shared.accountDetail,
+                        accountDetail: userDetails?.user?.accountDetail ?? "",
                         referenceID: "SP429910482190",
                         onFinished: { showReceipt() }
                     )
@@ -81,7 +82,7 @@ struct TransferFlowView: View {
             counterpartyName: name,
             counterpartyDetail: upiID,
             accountName: "SwiftPay Wallet",
-            accountDetail: UserProfileStore.shared.accountDetail,
+            accountDetail: userDetails?.user?.accountDetail ?? "",
             transactionID: "SP429910482190",
             feeText: money(fee)
         )
@@ -104,4 +105,5 @@ struct TransferFlowView: View {
 
 #Preview {
     TransferFlowView()
+        .environment(\.userDetails, UserDetailsViewModel.preview)
 }

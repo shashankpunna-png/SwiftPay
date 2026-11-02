@@ -6,7 +6,7 @@ struct HomeGreeting: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-            Text("\(greeting), \(name)")
+            Text(name.isEmpty ? greeting : "\(greeting), \(name)")
                 .font(Theme.Typography.headlineMedium)
                 .foregroundStyle(Theme.Colors.neutral)
                 .lineLimit(1)

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct TransactionsView: View {
+    @Environment(\.userDetails) private var userDetails
     @State private var query = ""
     @State private var kindFilter = TransactionListFilter.all
     @State private var dateRange: ClosedRange<Date>?
@@ -48,7 +49,7 @@ struct TransactionsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Theme.Colors.background)
         .navigationDestination(item: $selectedTransaction) { item in
-            TransactionDetailView(receipt: PaymentReceipt(item: item))
+            TransactionDetailView(receipt: PaymentReceipt(item: item, accountDetail: userDetails?.user?.accountDetail ?? ""))
         }
         .sheet(isPresented: $isDateSheetPresented) {
             DateRangeSheet(range: dateRange) { range in
@@ -76,4 +77,5 @@ struct TransactionsView: View {
 
 #Preview {
     TransactionsView()
+        .environment(\.userDetails, UserDetailsViewModel.preview)
 }

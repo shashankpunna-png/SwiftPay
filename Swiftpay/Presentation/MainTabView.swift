@@ -51,4 +51,5 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
+        .environment(\.userDetails, UserDetailsViewModel.preview)
 }
