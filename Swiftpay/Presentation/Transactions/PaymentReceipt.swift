@@ -61,7 +61,7 @@ struct PaymentReceipt {
 }
 
 extension PaymentReceipt {
-    init(item: TransactionItem) {
+    init(item: TransactionItem, accountDetail: String) {
         self.init(
             result: item.kind == .credit ? .credit : .debit,
             amount: item.amountText,
@@ -69,7 +69,7 @@ extension PaymentReceipt {
             counterpartyName: item.title,
             counterpartyDetail: Self.upiID(for: item.title),
             accountName: "SwiftPay Wallet",
-            accountDetail: UserProfileStore.shared.accountDetail,
+            accountDetail: accountDetail,
             transactionID: "SP\(item.id.uuidString.prefix(12))",
             feeText: "₹0.00"
         )

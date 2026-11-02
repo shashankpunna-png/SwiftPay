@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct SwiftpayApp: App {
+    @State private var container = DependencyContainer()
+
     var body: some Scene {
         WindowGroup {
             SplashView()
+                .environment(\.userDetails, container.userDetails)
+                .task {
+                    await container.userDetails.load()
+                }
         }
     }
 }
