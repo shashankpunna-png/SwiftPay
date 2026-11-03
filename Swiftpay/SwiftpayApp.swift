@@ -15,6 +15,7 @@ struct SwiftpayApp: App {
         WindowGroup {
             SplashView()
                 .environment(\.userDetails, container.userDetails)
+                .environmentObject(container.transactions)
                 .task {
                     await container.userDetails.load()
                 }

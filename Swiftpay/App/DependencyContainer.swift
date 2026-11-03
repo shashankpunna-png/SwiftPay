@@ -1,3 +1,4 @@
+
 import Foundation
 import SwiftData
 
@@ -5,6 +6,7 @@ import SwiftData
 final class DependencyContainer {
     let modelContainer: ModelContainer
     let userDetails: UserDetailsViewModel
+    let transactions: TransactionsViewModel
 
     init() {
         do {
@@ -12,15 +14,29 @@ final class DependencyContainer {
         } catch {
             fatalError("Could not open the user store: \(error)")
         }
-        let repository = UserRepositoryImpl(
+
+        let context = modelContainer.mainContext
+
+        let userRepository = UserRepositoryImpl(
             remote: UserRemoteDataSource(client: .live()),
-            store: UserStore(context: modelContainer.mainContext)
+            store: UserStore(context: context)
         )
+
         userDetails = UserDetailsViewModel(
-            getCachedUser: GetCachedUserUseCase(repository: repository),
-            refreshUser: RefreshUserUseCase(repository: repository),
-            updateUser: UpdateUserUseCase(repository: repository),
+            getCachedUser: GetCachedUserUseCase(repository: userRepository),
+            refreshUser: RefreshUserUseCase(repository: userRepository),
+            updateUser: UpdateUserUseCase(repository: userRepository),
             balanceVisibility: BalanceVisibilityStore()
+        )
+
+        let transactionRepository = TransactionRepositoryImpl(
+            remote: TransactionRemoteDataSource(client: .live()),
+            store: TransactionStore(context: context)
+        )
+
+        transactions = TransactionsViewModel(
+            getCached: GetCachedTransactionsUseCase(repository: transactionRepository),
+            refresh: RefreshTransactionsUseCase(repository: transactionRepository)
         )
     }
 }
