@@ -7,9 +7,28 @@ struct TransactionsView: View {
 
     @State private var selectedTransaction: Transaction?
 
+    // Search and filter state
+    @State private var searchText = ""
+    @State private var selectedFilter: TransactionListFilter = .all
+    @State private var selectedDateRange: ClosedRange<Date>?
+    @State private var isDateSheetPresented = false
+
     var body: some View {
         VStack(spacing: 0) {
             AppTopBar()
+
+            VStack(spacing: Theme.Spacing.md) {
+                TransactionSearchField(text: $searchText)
+
+                TransactionFilterBar(
+                    selection: $selectedFilter,
+                    isDateFilterActive: selectedDateRange != nil
+                ) {
+                    isDateSheetPresented = true
+                }
+            }
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.top, Theme.Spacing.md)
 
             ScrollView {
                 if transactionsViewModel.transactions.isEmpty {
@@ -24,10 +43,18 @@ struct TransactionsView: View {
                     .padding(.top, Theme.Spacing.xl)
                 } else {
                     TransactionList(
-                        transactions: transactionsViewModel.transactions
-                    ) { transaction in
-                        selectedTransaction = transaction
-                    }
+                        transactions: transactionsViewModel.transactions,
+                        isLoadingMore: transactionsViewModel.isLoadingMore,
+                        hasMore: transactionsViewModel.hasMore,
+                        onSelect: { transaction in
+                            selectedTransaction = transaction
+                        },
+                        onLoadMore: {
+                            Task {
+                                await transactionsViewModel.loadNextPage()
+                            }
+                        }
+                    )
                     .padding(.horizontal, Theme.Spacing.md)
                     .padding(.top, Theme.Spacing.md)
                     .padding(.bottom, Theme.Spacing.lg)
@@ -47,16 +74,45 @@ struct TransactionsView: View {
                 )
             )
         }
+        .sheet(isPresented: $isDateSheetPresented) {
+            DateRangeSheet(
+                range: selectedDateRange,
+                onApply: { range in
+                    selectedDateRange = range
+                },
+                onClear: {
+                    selectedDateRange = nil
+                }
+            )
+        }
+        .onChange(of: searchText) {
+            applyFilters()
+        }
+        .onChange(of: selectedFilter) {
+            applyFilters()
+        }
+        .onChange(of: selectedDateRange) {
+            applyFilters()
+        }
         .task {
             await transactionsViewModel.load()
         }
     }
-}
 
-#Preview {
-    let container = DependencyContainer()
+    private func applyFilters() {
+        let query = TransactionQuery(
+            searchText: searchText,
+            type: selectedFilter == .all
+                ? nil
+                : Transaction.Kind(rawValue: selectedFilter.rawValue.lowercased()),
+            fromDate: selectedDateRange?.lowerBound,
+            toDate: selectedDateRange?.upperBound,
+            limit: 5,
+            cursor: nil
+        )
 
-    TransactionsView()
-        .environment(\.userDetails, container.userDetails)
-        .environmentObject(container.transactions)
+        Task {
+            await transactionsViewModel.apply(query: query)
+        }
+    }
 }

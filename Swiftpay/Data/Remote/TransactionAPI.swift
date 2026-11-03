@@ -1,5 +1,7 @@
 import Foundation
 
 protocol TransactionAPI {
-    func fetchTransactions() async throws -> [Transaction]
+    func fetchTransactions(
+        query: TransactionQuery
+    ) async throws -> TransactionPage
 }

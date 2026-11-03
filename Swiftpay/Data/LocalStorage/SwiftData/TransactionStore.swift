@@ -1,7 +1,9 @@
+
 import Foundation
 import SwiftData
 
 final class TransactionStore {
+
     private let context: ModelContext
 
     init(context: ModelContext) {
@@ -10,48 +12,114 @@ final class TransactionStore {
 
     // MARK: - Load
 
-    func loadTransactions() throws -> [Transaction] {
+    func loadTransactions(
+        query: TransactionQuery
+    ) throws -> [Transaction] {
+
         let descriptor = FetchDescriptor<StoredTransaction>(
             sortBy: [
-                SortDescriptor(\.timestamp, order: .reverse)
+                SortDescriptor(
+                    \.timestamp,
+                    order: .reverse
+                )
             ]
         )
 
         let storedTransactions = try context.fetch(descriptor)
 
-        return try storedTransactions.map { try $0.toDomain() }
+        let transactions = try storedTransactions.map {
+            try $0.toDomain()
+        }
+
+        return transactions.filter {
+            matches($0, query: query)
+        }
+    }
+
+    // MARK: - Filtering
+
+    private func matches(
+        _ transaction: Transaction,
+        query: TransactionQuery
+    ) -> Bool {
+
+        // Type filter
+        if let type = query.type,
+           transaction.type != type {
+            return false
+        }
+
+        // Start date filter
+        if let fromDate = query.fromDate,
+           transaction.timestamp < fromDate {
+            return false
+        }
+
+        // End date filter
+        if let toDate = query.toDate,
+           transaction.timestamp > toDate {
+            return false
+        }
+
+        // Search filter
+        let search = query.searchText.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+
+        guard !search.isEmpty else {
+            return true
+        }
+
+        let searchableText = [
+            transaction.id,
+            transaction.senderDetails.name,
+            transaction.senderDetails.mobileNumber,
+            transaction.senderDetails.upiId,
+            transaction.receiverDetails.name,
+            transaction.receiverDetails.mobileNumber,
+            transaction.receiverDetails.upiId
+        ]
+
+        return searchableText.contains {
+            $0.localizedCaseInsensitiveContains(search)
+        }
     }
 
     // MARK: - Save / Upsert
 
-    func saveTransactions(_ transactions: [Transaction]) throws {
+    func saveTransactions(
+        _ transactions: [Transaction]
+    ) throws {
+
         guard !transactions.isEmpty else {
             return
         }
 
-        // Fetch existing records.
         let descriptor = FetchDescriptor<StoredTransaction>()
+
         let existingTransactions = try context.fetch(descriptor)
 
-        // Create lookup dictionary using transaction ID.
         var existingById: [String: StoredTransaction] = [:]
 
         for stored in existingTransactions {
             existingById[stored.id] = stored
         }
 
-        // Insert new transactions or update existing ones.
         for transaction in transactions {
+
             if let existing = existingById[transaction.id] {
+
+                // Update existing transaction
                 existing.update(from: transaction)
+
             } else {
-                let newTransaction = StoredTransaction(from: transaction)
 
-                context.insert(newTransaction)
+                // Insert new transaction
+                let stored = StoredTransaction(from: transaction)
 
-                // Keep dictionary updated to prevent duplicate inserts
-                // if the incoming API response contains duplicate IDs.
-                existingById[transaction.id] = newTransaction
+                context.insert(stored)
+
+                existingById[transaction.id] = stored
             }
         }
 

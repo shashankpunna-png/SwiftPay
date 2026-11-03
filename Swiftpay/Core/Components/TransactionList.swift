@@ -121,11 +121,22 @@ struct TransactionRow: View {
 
 struct TransactionList: View {
     let transactions: [Transaction]
+
+    var isLoadingMore = false
+    var hasMore = false
+
     var onSelect: ((Transaction) -> Void)? = nil
+    var onLoadMore: (() -> Void)? = nil
+
+    @State private var isLastRowVisible = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            ForEach(Array(transactions.enumerated()), id: \.element.id) { index, transaction in
+        LazyVStack(spacing: 0) {
+            ForEach(
+                Array(transactions.enumerated()),
+                id: \.element.id
+            ) { index, transaction in
+
                 row(for: transaction)
 
                 if index < transactions.count - 1 {
@@ -133,7 +144,22 @@ struct TransactionList: View {
                         .fill(Theme.Colors.divider)
                         .frame(height: 1)
                         .padding(.horizontal, Theme.Spacing.md)
+                } else if onLoadMore != nil {
+                    Color.clear
+                        .frame(height: 1)
+                        .onAppear {
+                            isLastRowVisible = true
+                            loadMoreIfNeeded()
+                        }
+                        .onDisappear {
+                            isLastRowVisible = false
+                        }
                 }
+            }
+
+            if isLoadingMore {
+                ProgressView()
+                    .padding(Theme.Spacing.md)
             }
         }
         .background(
@@ -143,6 +169,25 @@ struct TransactionList: View {
                 style: .continuous
             )
         )
+        .onChange(of: hasMore) {
+            if isLastRowVisible {
+                loadMoreIfNeeded()
+            }
+        }
+        .onChange(of: isLoadingMore) {
+            if isLastRowVisible {
+                loadMoreIfNeeded()
+            }
+        }
+    }
+
+    private func loadMoreIfNeeded() {
+        guard hasMore,
+              !isLoadingMore else {
+            return
+        }
+
+        onLoadMore?()
     }
 
     @ViewBuilder

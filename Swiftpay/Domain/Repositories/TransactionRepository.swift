@@ -1,6 +1,11 @@
 import Foundation
 
 protocol TransactionRepository {
-    func cachedTransactions() async throws -> [Transaction]
-    func refreshTransactions() async throws
+    func cachedTransactions(
+        query: TransactionQuery
+    ) async throws -> [Transaction]
+
+    func refreshTransactions(
+        query: TransactionQuery
+    ) async throws -> TransactionPage
 }

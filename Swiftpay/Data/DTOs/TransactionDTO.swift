@@ -20,6 +20,13 @@ enum TransactionMappingError: LocalizedError {
 struct TransactionsEnvelope: Decodable {
     let success: Bool
     let transactions: [TransactionDTO]
+    let pagination: TransactionPaginationDTO
+}
+
+struct TransactionPaginationDTO: Decodable {
+    let nextCursor: String?
+    let hasMore: Bool
+    let total: Int
 }
 
 struct TransactionPartyDTO: Decodable {

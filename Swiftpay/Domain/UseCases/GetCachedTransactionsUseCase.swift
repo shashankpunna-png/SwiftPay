@@ -3,7 +3,9 @@ import Foundation
 struct GetCachedTransactionsUseCase {
     let repository: TransactionRepository
 
-    func execute() async throws -> [Transaction] {
-        try await repository.cachedTransactions()
+    func execute(
+        query: TransactionQuery
+    ) async throws -> [Transaction] {
+        try await repository.cachedTransactions(query: query)
     }
 }

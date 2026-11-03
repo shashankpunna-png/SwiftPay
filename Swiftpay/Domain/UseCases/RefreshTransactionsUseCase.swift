@@ -3,7 +3,9 @@ import Foundation
 struct RefreshTransactionsUseCase {
     let repository: TransactionRepository
 
-    func execute() async throws {
-        try await repository.refreshTransactions()
+    func execute(
+        query: TransactionQuery
+    ) async throws -> TransactionPage {
+        try await repository.refreshTransactions(query: query)
     }
 }
