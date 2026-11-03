@@ -9,9 +9,9 @@ struct TransactionRow: View {
         HStack(spacing: Theme.Spacing.md) {
             Text(transactionsViewModel.initials(for: transaction))
                 .font(Theme.Typography.labelLarge)
-                .foregroundStyle(tint)
+                .foregroundStyle(typeColor)
                 .frame(width: 44, height: 44)
-                .background(tintBackground)
+                .background(typeBackground)
                 .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
@@ -23,36 +23,51 @@ struct TransactionRow: View {
                 Text(transactionsViewModel.formattedDate(for: transaction))
                     .font(Theme.Typography.bodySmall)
                     .foregroundStyle(Theme.Colors.textSecondary)
+
+                HStack(spacing: Theme.Spacing.xs) {
+                    typeBadge
+                    statusBadge
+                }
             }
 
             Spacer(minLength: Theme.Spacing.sm)
 
-            VStack(alignment: .trailing, spacing: Theme.Spacing.xs) {
-                Text(transactionsViewModel.signedAmount(for: transaction))
-                    .font(Theme.Typography.labelLarge)
-                    .monospacedDigit()
-                    .foregroundStyle(tint)
-
-                Text(transactionsViewModel.kindTitle(for: transaction))
-                    .font(Theme.Typography.labelSmall)
-                    .foregroundStyle(tint)
-                    .padding(.horizontal, Theme.Spacing.sm)
-                    .padding(.vertical, 2)
-                    .background(tintBackground, in: Capsule())
-            }
+            Text(transactionsViewModel.signedAmount(for: transaction))
+                .font(Theme.Typography.labelLarge)
+                .monospacedDigit()
+                .foregroundStyle(typeColor)
         }
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.vertical, Theme.Spacing.gutter)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
             "\(transactionsViewModel.counterpartyName(for: transaction)), " +
+            "\(transactionsViewModel.kindTitle(for: transaction)), " +
+            "\(statusTitle), " +
             "\(transactionsViewModel.formattedDate(for: transaction)), " +
-            "\(transactionsViewModel.signedAmount(for: transaction)), " +
-            "\(transactionsViewModel.kindTitle(for: transaction))"
+            "\(transactionsViewModel.signedAmount(for: transaction))"
         )
     }
 
-    private var tint: Color {
+    private var typeBadge: some View {
+        Text(transactionsViewModel.kindTitle(for: transaction))
+            .font(Theme.Typography.labelSmall)
+            .foregroundStyle(typeColor)
+            .padding(.horizontal, Theme.Spacing.sm)
+            .padding(.vertical, 3)
+            .background(typeBackground, in: Capsule())
+    }
+
+    private var statusBadge: some View {
+        Text(statusTitle)
+            .font(Theme.Typography.labelSmall)
+            .foregroundStyle(statusColor)
+            .padding(.horizontal, Theme.Spacing.sm)
+            .padding(.vertical, 3)
+            .background(statusBackground, in: Capsule())
+    }
+
+    private var typeColor: Color {
         switch transaction.type {
         case .credit:
             return Theme.Colors.success
@@ -61,7 +76,7 @@ struct TransactionRow: View {
         }
     }
 
-    private var tintBackground: Color {
+    private var typeBackground: Color {
         switch transaction.type {
         case .credit:
             return Theme.Colors.successBackground
@@ -69,8 +84,40 @@ struct TransactionRow: View {
             return Theme.Colors.errorBackground
         }
     }
-}
 
+    private var statusTitle: String {
+        switch transaction.status {
+        case .pending:
+            return "Pending"
+        case .success:
+            return "Success"
+        case .cancelled:
+            return "Cancelled"
+        }
+    }
+
+    private var statusColor: Color {
+        switch transaction.status {
+        case .pending:
+            return Theme.Colors.warning
+        case .success:
+            return Theme.Colors.success
+        case .cancelled:
+            return Theme.Colors.error
+        }
+    }
+
+    private var statusBackground: Color {
+            switch transaction.status {
+            case .pending:
+                return Theme.Colors.warningBackground
+            case .success:
+                return Theme.Colors.successBackground
+            case .cancelled:
+                return Theme.Colors.errorBackground
+            }
+    }
+}
 
 struct TransactionList: View {
     let transactions: [Transaction]

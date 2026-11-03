@@ -11,8 +11,8 @@ struct PaymentSummaryCard: View {
                 .foregroundStyle(Theme.Colors.neutral)
 
             PartyRow(
-                symbol: receipt.result.counterpartySymbol,
-                title: receipt.result.counterpartyTitle,
+                symbol: receipt.counterpartySymbol,
+                title: receipt.counterpartyTitle,
                 name: receipt.counterpartyName,
                 detail: receipt.counterpartyDetail,
                 trailing: receipt.amount
@@ -22,7 +22,7 @@ struct PaymentSummaryCard: View {
 
             PartyRow(
                 symbol: "wallet.pass",
-                title: receipt.result.accountTitle,
+                title: receipt.accountTitle,
                 name: receipt.accountName,
                 detail: receipt.accountDetail,
                 badge: receipt.result.accountBadge,
@@ -31,13 +31,18 @@ struct PaymentSummaryCard: View {
             )
 
             VStack(alignment: .leading, spacing: Theme.Spacing.md) {
-                CopyableIDRow(title: "Transaction ID", value: receipt.transactionID)
+                CopyableIDRow(
+                    title: "Transaction ID",
+                    value: receipt.transactionID
+                )
 
                 HStack {
                     Text("Fee & charges")
                         .font(Theme.Typography.bodyMedium)
                         .foregroundStyle(Theme.Colors.textSecondary)
+
                     Spacer()
+
                     Text(receipt.feeText)
                         .font(Theme.Typography.labelLarge)
                         .monospacedDigit()
@@ -47,14 +52,20 @@ struct PaymentSummaryCard: View {
             .padding(Theme.Spacing.md)
             .background(
                 Theme.Colors.fieldBackground,
-                in: RoundedRectangle(cornerRadius: Theme.Radius.input, style: .continuous)
+                in: RoundedRectangle(
+                    cornerRadius: Theme.Radius.input,
+                    style: .continuous
+                )
             )
         }
         .padding(Theme.Spacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             Theme.Colors.surface,
-            in: RoundedRectangle(cornerRadius: Theme.Radius.hero, style: .continuous)
+            in: RoundedRectangle(
+                cornerRadius: Theme.Radius.hero,
+                style: .continuous
+            )
         )
     }
 }
@@ -76,17 +87,24 @@ private struct PartyRow: View {
                 .foregroundStyle(Theme.Colors.primary)
                 .frame(width: 44, height: 44)
                 .background(Theme.Colors.tertiary)
-                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.input, style: .continuous))
+                .clipShape(
+                    RoundedRectangle(
+                        cornerRadius: Theme.Radius.input,
+                        style: .continuous
+                    )
+                )
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(Theme.Typography.bodySmall)
                     .foregroundStyle(Theme.Colors.textSecondary)
+
                 Text(name)
                     .font(Theme.Typography.labelLarge)
                     .foregroundStyle(Theme.Colors.neutral)
                     .lineLimit(1)
+
                 Text(detail)
                     .font(Theme.Typography.bodySmall)
                     .foregroundStyle(Theme.Colors.textSecondary)
@@ -126,6 +144,7 @@ private struct CopyableIDRow: View {
                 Text(title)
                     .font(Theme.Typography.bodySmall)
                     .foregroundStyle(Theme.Colors.textSecondary)
+
                 Text(value)
                     .font(Theme.Typography.labelLarge)
                     .monospacedDigit()
@@ -139,6 +158,7 @@ private struct CopyableIDRow: View {
             Button {
                 UIPasteboard.general.string = value
                 didCopy = true
+
                 Task {
                     try? await Task.sleep(for: .seconds(1.5))
                     didCopy = false
@@ -146,7 +166,11 @@ private struct CopyableIDRow: View {
             } label: {
                 Image(systemName: didCopy ? "checkmark" : "doc.on.doc")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(didCopy ? Theme.Colors.success : Theme.Colors.primary)
+                    .foregroundStyle(
+                        didCopy
+                            ? Theme.Colors.success
+                            : Theme.Colors.primary
+                    )
                     .frame(width: 36, height: 36)
             }
             .buttonStyle(.plain)

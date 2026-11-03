@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct TransactionDetailView: View {
-    var receipt: PaymentReceipt = .swiggy
+    let receipt: PaymentReceipt
 
     var body: some View {
         VStack(spacing: 0) {
@@ -13,7 +13,11 @@ struct TransactionDetailView: View {
                     PaymentSummaryCard(receipt: receipt)
 
                     HStack(spacing: Theme.Spacing.gutter) {
-                        AppButton(title: "Send again", systemImage: "arrow.clockwise") {}
+                        AppButton(
+                            title: "Send again",
+                            systemImage: "arrow.clockwise"
+                        ) {}
+
                         AppButton(
                             title: "Share receipt",
                             systemImage: "square.and.arrow.up",
@@ -25,25 +29,13 @@ struct TransactionDetailView: View {
                 .padding(.bottom, Theme.Spacing.lg)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .top
+        )
         .background(Theme.Colors.background)
         .toolbar(.hidden, for: .navigationBar)
         .allowsSwipeBack()
     }
-}
-
-#Preview("Debit") {
-    TransactionDetailView()
-}
-
-#Preview("Credit") {
-    TransactionDetailView(receipt: .credit)
-}
-
-#Preview("Processing") {
-    TransactionDetailView(receipt: .processing)
-}
-
-#Preview("Cancelled") {
-    TransactionDetailView(receipt: .cancelled)
 }

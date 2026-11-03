@@ -1,16 +1,15 @@
 import SwiftUI
 
 enum PaymentResult {
-    case credit
-    case debit
-    case processing
+    case success
+    case pending
     case cancelled
 
     var title: String {
         switch self {
-        case .credit, .debit:
+        case .success:
             return "Payment successful"
-        case .processing:
+        case .pending:
             return "Processing"
         case .cancelled:
             return "Payment cancelled"
@@ -19,72 +18,33 @@ enum PaymentResult {
 
     var symbol: String {
         switch self {
-        case .credit, .debit:
-            return "checkmark"
-        case .processing:
-            return "clock"
-        case .cancelled:
-            return "xmark"
+        case .success: return "checkmark"
+        case .pending: return "clock"
+        case .cancelled: return "xmark"
         }
     }
 
     var color: Color {
         switch self {
-        case .credit, .debit:
-            return Theme.Colors.success
-        case .processing:
-            return Theme.Colors.warning
-        case .cancelled:
-            return Theme.Colors.error
+        case .success: return Theme.Colors.success
+        case .pending: return Theme.Colors.warning
+        case .cancelled: return Theme.Colors.error
         }
     }
 
     var halo: Color {
         switch self {
-        case .credit, .debit:
-            return Theme.Colors.successBackground
-        case .processing:
-            return Theme.Colors.warningBackground
-        case .cancelled:
-            return Theme.Colors.errorBackground
-        }
-    }
-
-    var counterpartyTitle: String {
-        switch self {
-        case .credit:
-            return "Received from"
-        case .debit, .processing, .cancelled:
-            return "Paid to"
-        }
-    }
-
-    var counterpartySymbol: String {
-        switch self {
-        case .credit:
-            return "arrow.down.left"
-        case .debit, .processing, .cancelled:
-            return "arrow.up.right"
-        }
-    }
-
-    var accountTitle: String {
-        switch self {
-        case .credit:
-            return "Credited to"
-        case .debit, .processing, .cancelled:
-            return "Debited from"
+        case .success: return Theme.Colors.successBackground
+        case .pending: return Theme.Colors.warningBackground
+        case .cancelled: return Theme.Colors.errorBackground
         }
     }
 
     var accountBadge: String {
         switch self {
-        case .credit, .debit:
-            return "Active"
-        case .processing:
-            return "Processing"
-        case .cancelled:
-            return "Cancelled"
+        case .success: return "Active"
+        case .pending: return "Processing"
+        case .cancelled: return "Cancelled"
         }
     }
 }

@@ -1,85 +1,106 @@
 import Foundation
 
 struct PaymentReceipt {
-    var result: PaymentResult
-    var amount: String
-    var dateText: String
-    var counterpartyName: String
-    var counterpartyDetail: String
-    var accountName: String
-    var accountDetail: String
-    var transactionID: String
-    var feeText: String
+    let result: PaymentResult
+    let type: Transaction.Kind
 
-    static let swiggy = PaymentReceipt(
-        result: .debit,
-        amount: "₹480.00",
-        dateText: "26 Oct 2026, 1:15 PM",
-        counterpartyName: "Swiggy",
-        counterpartyDetail: "swiggy.orders@swiftpay",
-        accountName: "SwiftPay Wallet",
-        accountDetail: "Aarav Shah ••3210",
-        transactionID: "SP429910482190",
-        feeText: "₹0.00"
-    )
+    let amount: String
+    let dateText: String
+    let counterpartyName: String
+    let counterpartyDetail: String
+    let accountName: String
+    let accountDetail: String
+    let transactionID: String
+    let feeText: String
 
-    static let credit = PaymentReceipt(
-        result: .credit,
-        amount: "₹1,250.00",
-        dateText: "26 Oct 2026, 1:15 PM",
-        counterpartyName: "Rohan Verma",
-        counterpartyDetail: "rohan@swiftpay",
-        accountName: "SwiftPay Wallet",
-        accountDetail: "Aarav Shah ••3210",
-        transactionID: "SP429910482190",
-        feeText: "₹0.00"
-    )
+    // MARK: - Display Properties
 
-    static let processing = PaymentReceipt(
-        result: .processing,
-        amount: "₹1,200.00",
-        dateText: "26 Oct 2026, 1:15 PM",
-        counterpartyName: "Swiggy",
-        counterpartyDetail: "swiggy.orders@swiftpay",
-        accountName: "SwiftPay Wallet",
-        accountDetail: "Aarav Shah ••3210",
-        transactionID: "SP429910482190",
-        feeText: "₹0.00"
-    )
-
-    static let cancelled = PaymentReceipt(
-        result: .cancelled,
-        amount: "₹899.00",
-        dateText: "26 Oct 2026, 1:15 PM",
-        counterpartyName: "Swiggy",
-        counterpartyDetail: "swiggy.orders@swiftpay",
-        accountName: "SwiftPay Wallet",
-        accountDetail: "Aarav Shah ••3210",
-        transactionID: "SP429910482190",
-        feeText: "₹0.00"
-    )
-}
-
-extension PaymentReceipt {
-    init(item: TransactionItem, accountDetail: String) {
-        self.init(
-            result: item.kind == .credit ? .credit : .debit,
-            amount: item.amountText,
-            dateText: item.dateText,
-            counterpartyName: item.title,
-            counterpartyDetail: Self.upiID(for: item.title),
-            accountName: "SwiftPay Wallet",
-            accountDetail: accountDetail,
-            transactionID: "SP\(item.id.uuidString.prefix(12))",
-            feeText: "₹0.00"
-        )
+    var counterpartyTitle: String {
+        type == .credit ? "Received from" : "Paid to"
     }
 
-    private static func upiID(for name: String) -> String {
-        let slug = name
-            .lowercased()
-            .replacingOccurrences(of: " ", with: ".")
-            .filter { $0.isLetter || $0 == "." }
-        return "\(slug)@swiftpay"
+    var counterpartySymbol: String {
+        type == .credit ? "arrow.down.left" : "arrow.up.right"
+    }
+
+    var accountTitle: String {
+        type == .credit ? "Credited to" : "Debited from"
+    }
+}
+
+// MARK: - Domain Mapping
+
+extension PaymentReceipt {
+
+    init(transaction: Transaction, accountDetail: String) {
+        let isCredit = transaction.type == .credit
+
+        // Identify the other party in the transaction.
+        let counterparty = isCredit
+            ? transaction.senderDetails
+            : transaction.receiverDetails
+
+        // Map Domain status to presentation status.
+        let result: PaymentResult
+
+        switch transaction.status {
+        case .success:
+            result = .success
+
+        case .pending:
+            result = .pending
+
+        case .cancelled:
+            result = .cancelled
+        }
+
+        self.init(
+            result: result,
+            type: transaction.type,
+            amount: Self.formatCurrency(
+                transaction.amount,
+                currency: transaction.currency
+            ),
+            dateText: transaction.timestamp.formatted(
+                .dateTime
+                    .day()
+                    .month(.abbreviated)
+                    .year()
+                    .hour()
+                    .minute()
+            ),
+            counterpartyName: counterparty.name,
+            counterpartyDetail: counterparty.upiId.isEmpty
+                ? counterparty.mobileNumber
+                : counterparty.upiId,
+            accountName: "SwiftPay Wallet",
+            accountDetail: accountDetail,
+            transactionID: transaction.id,
+            feeText: Self.formatCurrency(
+                transaction.fee,
+                currency: transaction.currency
+            )
+        )
+    }
+}
+
+// MARK: - Formatting
+
+private extension PaymentReceipt {
+
+    static func formatCurrency(
+        _ amount: Decimal,
+        currency: String
+    ) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = currency
+        formatter.locale = Locale(identifier: "en_IN")
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+
+        return formatter.string(
+            from: NSDecimalNumber(decimal: amount)
+        ) ?? "\(currency) \(amount)"
     }
 }

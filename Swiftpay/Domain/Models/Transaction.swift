@@ -7,10 +7,9 @@ struct Transaction: Equatable, Sendable, Identifiable, Hashable {
     }
 
     enum Status: String, Equatable, Sendable {
-        case completed
         case pending
+        case success
         case cancelled
-        case failed
     }
 
     let id: String

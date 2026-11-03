@@ -76,9 +76,12 @@ struct TransferFlowView: View {
 
     private var receipt: PaymentReceipt {
         PaymentReceipt(
-            result: .debit,
+            result: .success,
+            type: .debit,
             amount: money(total),
-            dateText: Date.now.formatted(.dateTime.day().month(.abbreviated).year().hour().minute()),
+            dateText: Date.now.formatted(
+                .dateTime.day().month(.abbreviated).year().hour().minute()
+            ),
             counterpartyName: name,
             counterpartyDetail: upiID,
             accountName: "SwiftPay Wallet",
