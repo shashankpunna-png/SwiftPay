@@ -1,11 +1,13 @@
 import SwiftUI
 
 struct TransactionRow: View {
-    let item: TransactionItem
+    let transaction: Transaction
+
+    @EnvironmentObject private var transactionsViewModel: TransactionsViewModel
 
     var body: some View {
         HStack(spacing: Theme.Spacing.md) {
-            Text(item.initials)
+            Text(transactionsViewModel.initials(for: transaction))
                 .font(Theme.Typography.labelLarge)
                 .foregroundStyle(tint)
                 .frame(width: 44, height: 44)
@@ -13,11 +15,12 @@ struct TransactionRow: View {
                 .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                Text(item.title)
+                Text(transactionsViewModel.counterpartyName(for: transaction))
                     .font(Theme.Typography.labelLarge)
                     .foregroundStyle(Theme.Colors.neutral)
                     .lineLimit(1)
-                Text(item.dateText)
+
+                Text(transactionsViewModel.formattedDate(for: transaction))
                     .font(Theme.Typography.bodySmall)
                     .foregroundStyle(Theme.Colors.textSecondary)
             }
@@ -25,11 +28,12 @@ struct TransactionRow: View {
             Spacer(minLength: Theme.Spacing.sm)
 
             VStack(alignment: .trailing, spacing: Theme.Spacing.xs) {
-                Text(item.signedAmount)
+                Text(transactionsViewModel.signedAmount(for: transaction))
                     .font(Theme.Typography.labelLarge)
                     .monospacedDigit()
                     .foregroundStyle(tint)
-                Text(item.kind.rawValue)
+
+                Text(transactionsViewModel.kindTitle(for: transaction))
                     .font(Theme.Typography.labelSmall)
                     .foregroundStyle(tint)
                     .padding(.horizontal, Theme.Spacing.sm)
@@ -40,11 +44,16 @@ struct TransactionRow: View {
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.vertical, Theme.Spacing.gutter)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(item.title), \(item.dateText), \(item.signedAmount), \(item.kind.rawValue)")
+        .accessibilityLabel(
+            "\(transactionsViewModel.counterpartyName(for: transaction)), " +
+            "\(transactionsViewModel.formattedDate(for: transaction)), " +
+            "\(transactionsViewModel.signedAmount(for: transaction)), " +
+            "\(transactionsViewModel.kindTitle(for: transaction))"
+        )
     }
 
     private var tint: Color {
-        switch item.kind {
+        switch transaction.type {
         case .credit:
             return Theme.Colors.success
         case .debit:
@@ -53,7 +62,7 @@ struct TransactionRow: View {
     }
 
     private var tintBackground: Color {
-        switch item.kind {
+        switch transaction.type {
         case .credit:
             return Theme.Colors.successBackground
         case .debit:
@@ -62,14 +71,16 @@ struct TransactionRow: View {
     }
 }
 
+
 struct TransactionList: View {
-    let transactions: [TransactionItem]
-    var onSelect: ((TransactionItem) -> Void)? = nil
+    let transactions: [Transaction]
+    var onSelect: ((Transaction) -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(Array(transactions.enumerated()), id: \.element.id) { index, item in
-                row(for: item)
+            ForEach(Array(transactions.enumerated()), id: \.element.id) { index, transaction in
+                row(for: transaction)
+
                 if index < transactions.count - 1 {
                     Rectangle()
                         .fill(Theme.Colors.divider)
@@ -80,21 +91,24 @@ struct TransactionList: View {
         }
         .background(
             Theme.Colors.surface,
-            in: RoundedRectangle(cornerRadius: Theme.Radius.hero, style: .continuous)
+            in: RoundedRectangle(
+                cornerRadius: Theme.Radius.hero,
+                style: .continuous
+            )
         )
     }
 
     @ViewBuilder
-    private func row(for item: TransactionItem) -> some View {
+    private func row(for transaction: Transaction) -> some View {
         if let onSelect {
             Button {
-                onSelect(item)
+                onSelect(transaction)
             } label: {
-                TransactionRow(item: item)
+                TransactionRow(transaction: transaction)
             }
             .buttonStyle(.plain)
         } else {
-            TransactionRow(item: item)
+            TransactionRow(transaction: transaction)
         }
     }
 }

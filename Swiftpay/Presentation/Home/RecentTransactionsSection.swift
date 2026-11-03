@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct RecentTransactionsSection: View {
-    let transactions: [TransactionItem]
+    let transactions: [Transaction]
     var onSeeAll: () -> Void = {}
-    var onSelect: (TransactionItem) -> Void = { _ in }
+    var onSelect: (Transaction) -> Void = { _ in }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -11,7 +11,9 @@ struct RecentTransactionsSection: View {
                 Text("Recent Transactions")
                     .font(Theme.Typography.headlineSmall)
                     .foregroundStyle(Theme.Colors.neutral)
+
                 Spacer()
+
                 Button(action: onSeeAll) {
                     HStack(spacing: 2) {
                         Text("See all")
@@ -24,7 +26,10 @@ struct RecentTransactionsSection: View {
                 .buttonStyle(.plain)
             }
 
-            TransactionList(transactions: transactions, onSelect: onSelect)
+            TransactionList(
+                transactions: transactions,
+                onSelect: onSelect
+            )
         }
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.top, Theme.Spacing.lg)
