@@ -4,4 +4,8 @@ protocol TransactionAPI {
     func fetchTransactions(
         query: TransactionQuery
     ) async throws -> TransactionPage
+
+    func createTransaction(
+        request: CreateTransactionRequest
+    ) async throws -> CreateTransactionResult
 }

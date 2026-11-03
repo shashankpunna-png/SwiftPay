@@ -9,6 +9,9 @@ enum AppTab: Hashable {
 struct MainTabView: View {
     @State private var selectedTab = AppTab.home
     @State private var showProfile = false
+    @Environment(\.userDetails) private var userDetails
+    @Environment(\.createTransactionUseCase) private var createTransaction
+    @EnvironmentObject private var transactions: TransactionsViewModel
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -24,11 +27,22 @@ struct MainTabView: View {
             }
             .tag(AppTab.home)
 
-            TransferFlowView()
-                .tabItem {
-                    Label("Transfer", systemImage: "paperplane.fill")
+            Group {
+                if let userDetails,
+                let createTransaction {
+                    TransferFlowView(
+                        createTransaction: createTransaction,
+                        userDetails: userDetails,
+                        transactions: transactions
+                    )
+                } else {
+                    ProgressView()
                 }
-                .tag(AppTab.transfer)
+            }
+            .tabItem {
+                Label("Transfer", systemImage: "paperplane.fill")
+            }
+            .tag(AppTab.transfer)
 
             NavigationStack {
                 TransactionsView()

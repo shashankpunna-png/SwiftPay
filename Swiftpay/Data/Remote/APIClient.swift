@@ -24,13 +24,16 @@ struct APIClient {
         path: String,
         method: String,
         body: Data? = nil,
-        queryItems: [URLQueryItem] = []
+        queryItems: [URLQueryItem] = [],
+        headers: [String: String] = [:]
     ) async throws -> Response {
+
         let data = try await sendData(
             path: path,
             method: method,
             body: body,
-            queryItems: queryItems
+            queryItems: queryItems,
+            headers: headers
         )
 
         do {
@@ -48,10 +51,14 @@ struct APIClient {
         path: String,
         method: String,
         body: Data?,
-        queryItems: [URLQueryItem]
+        queryItems: [URLQueryItem],
+        headers: [String: String]
     ) async throws -> Data {
 
-        guard let baseURL = URL(string: path, relativeTo: self.baseURL)?.absoluteURL else {
+        guard let baseURL = URL(
+            string: path,
+            relativeTo: self.baseURL
+        )?.absoluteURL else {
             throw APIError.undecodable
         }
 
@@ -65,7 +72,8 @@ struct APIClient {
                 throw APIError.undecodable
             }
 
-            components.queryItems = (components.queryItems ?? []) + queryItems
+            components.queryItems =
+                (components.queryItems ?? []) + queryItems
 
             guard let url = components.url else {
                 throw APIError.undecodable
@@ -86,6 +94,13 @@ struct APIClient {
             )
         }
 
+        headers.forEach { key, value in
+            request.setValue(
+                value,
+                forHTTPHeaderField: key
+            )
+        }
+
         return try await load(request: request)
     }
 
@@ -95,17 +110,22 @@ struct APIClient {
 
         do {
             (data, response) = try await session.data(for: request)
+
         } catch let error as URLError {
-        switch error.code {
+            switch error.code {
             case .timedOut:
                 throw APIError.timedOut
+
             case .cancelled:
                 throw CancellationError()
+
             default:
                 throw APIError.unreachable
             }
+
         } catch let error as APIError {
             throw error
+
         } catch {
             throw APIError.unreachable
         }
@@ -115,13 +135,21 @@ struct APIClient {
         }
 
         guard (200..<300).contains(http.statusCode) else {
-            let message = (try? decoder.decode(
+            let failure = try? decoder.decode(
                 APIFailureBody.self,
                 from: data
-            ))?.error.message ?? "The server returned an error."
+            )
+
+            let message =
+                failure?.error?.message
+                ?? failure?.message
+                ?? "The server returned an error."
+
+            let code = failure?.error?.code
 
             throw APIError.server(
                 status: http.statusCode,
+                code: code,
                 message: message
             )
         }

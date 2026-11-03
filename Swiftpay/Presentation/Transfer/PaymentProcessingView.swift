@@ -1,31 +1,28 @@
+
 import SwiftUI
 
 struct PaymentProcessingView: View {
-    var recipientName = "Swiggy"
-    var recipientPhone = "9988776655"
-    var amountText = "₹480.00"
-    var accountDetail = "SwiftPay Wallet ••3210"
-    var referenceID = "SP429910482190"
-    var onFinished: () -> Void = {}
+
+    let recipientName: String
+    let recipientPhone: String
+    let amountText: String
+    let accountDetail: String
 
     var body: some View {
         processing
             .toolbar(.hidden, for: .navigationBar)
-            .task {
-                try? await Task.sleep(for: .seconds(3))
-                guard !Task.isCancelled else { return }
-                onFinished()
-            }
     }
 
     private var processing: some View {
         VStack(spacing: Theme.Spacing.xl) {
+
             spinner
 
             VStack(spacing: Theme.Spacing.xs) {
                 Text("Processing payment")
                     .font(Theme.Typography.headlineMedium)
                     .foregroundStyle(Theme.Colors.neutral)
+
                 Text("Please do not press Back or close the app")
                     .font(Theme.Typography.bodySmall)
                     .foregroundStyle(Theme.Colors.textSecondary)
@@ -33,6 +30,7 @@ struct PaymentProcessingView: View {
             }
 
             VStack(spacing: Theme.Spacing.md) {
+
                 Text("Paying to")
                     .font(Theme.Typography.labelSmall)
                     .textCase(.uppercase)
@@ -40,6 +38,7 @@ struct PaymentProcessingView: View {
                     .foregroundStyle(Theme.Colors.textSecondary)
 
                 HStack(spacing: Theme.Spacing.sm) {
+
                     Text(initials)
                         .font(Theme.Typography.labelLarge)
                         .foregroundStyle(Theme.Colors.primary)
@@ -51,6 +50,7 @@ struct PaymentProcessingView: View {
                         Text(recipientName)
                             .font(Theme.Typography.labelLarge)
                             .foregroundStyle(Theme.Colors.neutral)
+
                         Text(recipientPhone)
                             .font(Theme.Typography.bodySmall)
                             .monospacedDigit()
@@ -58,7 +58,8 @@ struct PaymentProcessingView: View {
                     }
                 }
 
-                Divider().overlay(Theme.Colors.divider)
+                Divider()
+                    .overlay(Theme.Colors.divider)
 
                 Text(amountText)
                     .font(Theme.Typography.displayCurrency)
@@ -73,22 +74,26 @@ struct PaymentProcessingView: View {
             .frame(maxWidth: .infinity)
             .background(
                 Theme.Colors.surface,
-                in: RoundedRectangle(cornerRadius: Theme.Radius.hero, style: .continuous)
+                in: RoundedRectangle(
+                    cornerRadius: Theme.Radius.hero,
+                    style: .continuous
+                )
             )
 
             VStack(spacing: Theme.Spacing.sm) {
+
                 HStack(spacing: Theme.Spacing.xs) {
                     Image(systemName: "checkmark.shield.fill")
                         .font(.system(size: 16, weight: .semibold))
                         .accessibilityHidden(true)
+
                     Text("100% Secure")
                         .font(Theme.Typography.labelLarge)
                 }
                 .foregroundStyle(Theme.Colors.primary)
 
-                Text("Ref ID: \(referenceID)")
+                Text("Connecting securely to SwiftPay")
                     .font(Theme.Typography.bodySmall)
-                    .monospacedDigit()
                     .foregroundStyle(Theme.Colors.textSecondary)
             }
         }
@@ -99,18 +104,28 @@ struct PaymentProcessingView: View {
 
     private var spinner: some View {
         TimelineView(.animation) { timeline in
+
             let period = 0.9
             let elapsed = timeline.date.timeIntervalSinceReferenceDate
-            let angle = (elapsed.truncatingRemainder(dividingBy: period) / period) * 360
+            let angle = (
+                elapsed.truncatingRemainder(dividingBy: period) / period
+            ) * 360
 
             ZStack {
                 Circle()
-                    .stroke(Theme.Colors.tertiary, lineWidth: 4)
+                    .stroke(
+                        Theme.Colors.tertiary,
+                        lineWidth: 4
+                    )
+
                 Circle()
                     .trim(from: 0, to: 0.28)
                     .stroke(
                         Theme.Colors.primary,
-                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                        style: StrokeStyle(
+                            lineWidth: 4,
+                            lineCap: .round
+                        )
                     )
                     .rotationEffect(.degrees(angle))
 
@@ -127,12 +142,22 @@ struct PaymentProcessingView: View {
     }
 
     private var initials: String {
-        let letters = recipientName.split(separator: " ").prefix(2).compactMap(\.first)
+        let letters = recipientName
+            .split(separator: " ")
+            .prefix(2)
+            .compactMap(\.first)
+
         let text = String(letters).uppercased()
+
         return text.isEmpty ? "?" : text
     }
 }
 
 #Preview {
-    PaymentProcessingView()
+    PaymentProcessingView(
+        recipientName: "Swiggy",
+        recipientPhone: "9988776655",
+        amountText: "₹480.00",
+        accountDetail: "SwiftPay Wallet ••3210"
+    )
 }

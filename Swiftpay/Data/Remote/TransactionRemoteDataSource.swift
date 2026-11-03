@@ -70,6 +70,36 @@ struct TransactionRemoteDataSource: TransactionAPI {
         )
     }
 
+    func createTransaction(
+    request: CreateTransactionRequest
+    ) async throws -> CreateTransactionResult {
+
+        let requestDTO = CreateTransactionRequestDTO(
+            type: "debit",
+            amount: request.amount,
+            currency: request.currency,
+            senderDetails: TransactionPartyRequestDTO(
+                domain: request.senderDetails
+            ),
+            receiverDetails: TransactionPartyRequestDTO(
+                domain: request.receiverDetails
+            )
+        )
+
+        let body = try JSONEncoder().encode(requestDTO)
+
+        let response: CreateTransactionResponseDTO = try await client.send(
+            path: "/api/transactions",
+            method: "POST",
+            body: body,
+            headers: [
+                "Idempotency-Key": request.idempotencyKey
+            ]
+        )
+
+        return try response.domain()
+    }
+
     private func dateString(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")

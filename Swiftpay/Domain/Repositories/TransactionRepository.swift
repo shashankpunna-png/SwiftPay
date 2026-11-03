@@ -8,4 +8,8 @@ protocol TransactionRepository {
     func refreshTransactions(
         query: TransactionQuery
     ) async throws -> TransactionPage
+
+    func createTransaction(
+        request: CreateTransactionRequest
+    ) async throws -> CreateTransactionResult
 }

@@ -1,4 +1,3 @@
-
 import Foundation
 import SwiftData
 
@@ -7,6 +6,7 @@ final class DependencyContainer {
     let modelContainer: ModelContainer
     let userDetails: UserDetailsViewModel
     let transactions: TransactionsViewModel
+    let createTransaction: CreateTransactionUseCase
 
     init() {
         do {
@@ -35,8 +35,15 @@ final class DependencyContainer {
         )
 
         transactions = TransactionsViewModel(
-            getCached: GetCachedTransactionsUseCase(repository: transactionRepository),
-            refresh: RefreshTransactionsUseCase(repository: transactionRepository)
+            getCached: GetCachedTransactionsUseCase(
+                repository: transactionRepository
+            ),
+            refresh: RefreshTransactionsUseCase(
+                repository: transactionRepository
+            )
+        )
+        createTransaction = CreateTransactionUseCase(
+            repository: transactionRepository
         )
     }
 }

@@ -42,4 +42,15 @@ final class TransactionRepositoryImpl: TransactionRepository {
         // 3. Return pagination metadata
         return remotePage
     }
+
+    func createTransaction(
+    request: CreateTransactionRequest
+    ) async throws -> CreateTransactionResult {
+
+        let result = try await remote.createTransaction(
+            request: request
+        )
+
+        return result
+    }
 }
