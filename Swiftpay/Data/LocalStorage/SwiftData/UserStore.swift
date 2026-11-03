@@ -5,12 +5,28 @@ struct UserStore {
     let context: ModelContext
 
     static func makeContainer(inMemory: Bool = false) throws -> ModelContainer {
-        let configuration = ModelConfiguration("User", isStoredInMemoryOnly: inMemory)
-        return try ModelContainer(for: StoredUser.self, configurations: configuration)
+        let schema = Schema([
+            StoredUser.self,
+            StoredTransaction.self
+        ])
+
+        let configuration = ModelConfiguration(
+            "User",
+            schema: schema,
+            isStoredInMemoryOnly: inMemory
+        )
+
+        return try ModelContainer(
+            for: schema,
+            configurations: configuration
+        )
     }
 
     func load() throws -> User? {
-        let stored = try context.fetch(FetchDescriptor<StoredUser>())
+        var descriptor = FetchDescriptor<StoredUser>()
+        descriptor.fetchLimit = 1
+
+        let stored = try context.fetch(descriptor)
         return stored.first?.user
     }
 
