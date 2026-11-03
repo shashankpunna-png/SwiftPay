@@ -60,7 +60,19 @@ struct TransactionDTO: Decodable {
         }
 
         let formatter = ISO8601DateFormatter()
-        guard let date = formatter.date(from: timestamp) else {
+
+        formatter.formatOptions = [
+            .withInternetDateTime,
+            .withFractionalSeconds
+        ]
+
+        let date = formatter.date(from: timestamp)
+            ?? {
+                formatter.formatOptions = [.withInternetDateTime]
+                return formatter.date(from: timestamp)
+            }()
+
+        guard let date else {
             throw TransactionMappingError.invalidTimestamp(timestamp)
         }
 
