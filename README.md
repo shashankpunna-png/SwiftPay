@@ -1,6 +1,6 @@
 # SwiftPay
 
-SwiftPay is a native iOS wallet app built with SwiftUI and SwiftData, backed by a small file-based Node.js API. It supports viewing a wallet balance, browsing and filtering transactions, viewing payment receipts, and sending money through a three-step transfer flow.
+SwiftPay is a native iOS wallet app built with SwiftUI and SwiftData, backed by a small file-based Node.js API. It supports viewing a wallet balance, browsing and filtering transactions, viewing and sharing payment receipts, and sending money through a three-step transfer flow.
 
 The app is a local demo project: there is no authentication, no cloud backend, and no third-party iOS dependency.
 
@@ -24,18 +24,20 @@ The app is a local demo project: there is no authentication, no cloud backend, a
 
 ## Features
 
-- Wallet balance with hide/show toggle (persisted locally)
-- Home screen with greeting, balance, and five most recent transactions
+- Wallet balance with a temporary hide/show toggle on Home; launch visibility is configured in Profile and persisted locally
+- Home screen with greeting, balance, five most recent transactions, and pull-to-refresh
 - Full transaction history with:
   - Text search
   - All / Credit / Debit filters
   - Date-range filtering
   - Cursor-based pagination and pull-to-refresh
-- Transaction detail/receipt screen with copyable transaction ID
+- Pull-to-refresh on Home and Transactions reloads both transactions and the profile
+- Transaction detail/receipt screen with copyable transaction ID and native iOS sharing
 - Three-step transfer flow: Recipient → Amount → Review
 - Server-side balance validation and idempotent payment submission
 - "Send again" shortcut that opens a fresh transfer form
-- Editable profile (name, mobile number, UPI ID, photo)
+- Editable profile (name, mobile number, UPI ID, photo) with a success toast and automatic dismissal
+- Offline indicator under the SwiftPay title that appears when the device loses connectivity
 - Local caching so the app can show the last known data when the server is unreachable
 - Success/coin sound effects and haptic feedback
 
@@ -49,17 +51,18 @@ The app is a local demo project: there is no authentication, no cloud backend, a
 | --- | --- | --- |
 | Splash | App launch | Shows the SwiftPay launch logo, then immediately swaps to the main tab view. |
 | Main tabs | After splash | Hosts the Home, Transfer, and Transactions tabs. The profile screen is presented as a full-screen cover from the top bar avatar. |
-| Profile | Avatar in the top bar | Edits name, mobile number, UPI ID, and profile photo. Saves with `PATCH /api/user`. Also toggles "Show balance on launch". |
+| Profile | Avatar in the top bar | Edits name, mobile number, UPI ID, and profile photo. Saves with `PATCH /api/user`, shows a success toast, then closes. Also toggles "Show balance on launch". |
 
 ### Home
 
 `Presentation/Home/HomeView.swift`
 
 - Displays a time-aware greeting and the user's UPI ID.
-- Shows the wallet balance card; the eye button hides/shows the balance. The choice is stored in `UserDefaults` under `profile.showsBalanceOnLaunch`.
+- Shows the wallet balance card; the eye button hides/shows the balance temporarily for the current session. The persisted launch preference lives in Profile (`profile.showsBalanceOnLaunch`), and Home re-reads it when the app launches or the preference changes.
 - **Send Money** switches to the Transfer tab.
 - **Transactions** switches to the Transactions tab.
 - Lists the five most recent transactions; tapping one opens the transaction detail screen.
+- Pull-to-refresh reloads the transaction list and the profile.
 
 ### Transactions
 
@@ -69,7 +72,7 @@ The app is a local demo project: there is no authentication, no cloud backend, a
 - Filter chips: All, Credit, Debit.
 - Calendar button opens a date-range sheet; the applied range covers full days.
 - Infinite scrolling loads the next page as the last row becomes visible (page size 5).
-- Pull-to-refresh fetches the latest page from the server.
+- Pull-to-refresh fetches the latest page from the server and refreshes the profile.
 - Tapping a row opens the transaction detail screen.
 
 ### Transaction detail / receipt
@@ -80,7 +83,7 @@ The app is a local demo project: there is no authentication, no cloud backend, a
 - Shows payment status (Success, Processing, or Cancelled), amount, timestamp, counterparty, debiting/crediting wallet, fee, and transaction ID.
 - Transaction ID can be copied to the clipboard.
 - **Send again** resets the transfer flow and opens the first transfer screen with an empty form. This works from all entry points.
-- **Share receipt** is currently a placeholder (no action).
+- **Share receipt** opens the native iOS share sheet with a formatted text receipt containing the status, counterparty, amount, date, wallet, transaction ID, and fee.
 
 ### Transfer flow
 
@@ -100,7 +103,7 @@ Validation errors are surfaced inline on each step. If the network times out or 
 
 - `PaymentStatusCard` and `PaymentSummaryCard` render the receipt.
 - `TransferStepIndicator` shows the 1-2-3 progress indicator.
-- `AppTopBar` provides the profile avatar and notifications bell (bell is currently a placeholder).
+- `AppTopBar` provides the SwiftPay title, profile avatar, notifications bell (bell is currently a placeholder), and a red "No Internet!" line under the title when offline.
 - `Theme.swift` contains the design system: colors, spacing, radii, and typography.
 
 ---
@@ -173,8 +176,9 @@ flowchart TB
 - `\.userDetails` — custom `EnvironmentValues` key
 - `\.createTransactionUseCase` — custom `EnvironmentValues` key
 - `transactions` — `EnvironmentObject`
+- `networkMonitor` — `EnvironmentObject` backed by `NWPathMonitor`
 
-`MainTabView` also injects `\.openProfile` and `\.startNewTransfer` actions so any screen can open the profile or reset the transfer flow without owning that navigation state.
+`MainTabView` also injects `\.openProfile` and `\.startNewTransfer` actions so any screen can open the profile or reset the transfer flow without owning that navigation state. `AppTopBar` reads `networkMonitor` to display the offline note under the SwiftPay title.
 
 ---
 
@@ -278,6 +282,7 @@ Swiftpay/
 ├── Swiftpay.xcodeproj
 ├── Swiftpay/
 │   ├── SwiftpayApp.swift          # App entry point and environment injection
+│   ├── Info.plist                 # Display name (SwiftPay) and local networking
 │   ├── ContentView.swift          # Design-system swatch preview (not used by the app)
 │   ├── App/
 │   │   └── DependencyContainer.swift
@@ -285,7 +290,7 @@ Swiftpay/
 │   │   ├── Components/            # AppButton, AppTextField, AppTopBar, TransactionList
 │   │   ├── DesignSystem/          # Theme (colors, spacing, typography)
 │   │   ├── Extensions/            # View+Keyboard
-│   │   └── Utilities/             # PaymentFeedback, DayRange, SwipeBack
+│   │   └── Utilities/             # PaymentFeedback, DayRange, SwipeBack, NetworkMonitor
 │   ├── Data/
 │   │   ├── DTOs/
 │   │   ├── LocalStorage/
@@ -450,7 +455,7 @@ Send `Idempotency-Key: <uuid>` as a request header. The server stores the key an
 - **SwiftData** stores `StoredUser` and `StoredTransaction`, created by `UserStore.makeContainer()`.
 - `UserStore` keeps a single user record and replaces stale records when the user ID changes.
 - `TransactionStore` upserts transactions by ID and filters/sorts them locally for cached reads.
-- **UserDefaults** stores `profile.showsBalanceOnLaunch`.
+- **UserDefaults** stores `profile.showsBalanceOnLaunch`, which is edited in Profile. The Home eye toggle is temporary and never writes this value.
 
 ### On the server
 
@@ -468,6 +473,7 @@ Writes are atomic: the server writes to a temporary file and renames it into pla
 | --- | --- | --- |
 | API base URL | `Swiftpay/Data/Remote/APIClient.swift` (`APIClient.live`) | `http://127.0.0.1:4000` |
 | Server port | `swiftpay-server/server.js` / `PORT` env var | `4000` |
+| Home screen app name | `Swiftpay/Info.plist` (`CFBundleDisplayName`) | `SwiftPay` |
 | Deployment target | Xcode project | iOS 26.0 |
 | Swift version | Xcode project | Swift 5 language mode |
 
@@ -493,6 +499,8 @@ Keep the Mac and iPhone on the same network. `Info.plist` already enables `NSAll
 - **Idempotency:** a new key is generated per payment attempt; keys are cleared after a confirmed success or a definitive 4xx failure.
 - **Refresh after payment:** both the profile and transaction list are refreshed after every payment attempt, including failures.
 - **Cached-first UX:** user and transaction screens render cached data first, then refresh from the server.
+- **Connectivity:** `NetworkMonitor` uses `NWPathMonitor`, restarts when the app becomes active, and drives the red "No Internet!" note under the SwiftPay title.
+- **Receipt sharing:** `ShareLink` opens the system share sheet with a formatted text receipt.
 - **Accessibility:** transaction rows, balance visibility, buttons, and the step indicator include accessibility labels.
 - **Sounds:** `PaymentSuccess.m4a` and `CoinDrop.m4a` play through `AVAudioPlayer` with the ambient audio category.
 - **Swipe-back:** transfer steps and the receipt disable the interactive pop gesture where appropriate.
@@ -516,7 +524,7 @@ There are currently no unit or UI test targets.
 - No authentication or multi-user support.
 - No top-up flow; wallet balance must be edited in `user.json` for a fresh seed.
 - Transfer fee is fixed at `0` on the server.
-- **Share receipt** and the notifications bell are placeholders.
+- The notifications bell is a placeholder.
 - The Home **Send Money** button only switches to the Transfer tab; **Send again** explicitly resets the form.
 - The backend is local, file-backed, and served over plain HTTP.
 - `swiftpay-server/data/` contains sample/demo data and is committed to the repository; do not store real personal data there.

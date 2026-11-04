@@ -21,11 +21,19 @@ struct TransactionDetailView: View {
                             action: onSendAgain
                         )
 
-                        AppButton(
-                            title: "Share receipt",
-                            systemImage: "square.and.arrow.up",
-                            style: .secondary
-                        ) {}
+                        ShareLink(item: receipt.shareText) {
+                            HStack(spacing: Theme.Spacing.sm) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .accessibilityHidden(true)
+
+                                Text("Share receipt")
+                                    .font(Theme.Typography.labelLarge)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.8)
+                            }
+                        }
+                        .buttonStyle(AppButtonStyle(style: .secondary))
                     }
                 }
                 .padding(Theme.Spacing.md)

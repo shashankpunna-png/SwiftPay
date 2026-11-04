@@ -26,6 +26,22 @@ struct PaymentReceipt {
     var accountTitle: String {
         type == .credit ? "Credited to" : "Debited from"
     }
+
+    var shareText: String {
+        """
+        SwiftPay Receipt
+        \(result.title)
+
+        \(counterpartyTitle): \(counterpartyName)
+        Details: \(counterpartyDetail)
+
+        Amount: \(amount)
+        Date: \(dateText)
+        \(accountTitle): \(accountName) \(accountDetail)
+        Transaction ID: \(transactionID)
+        Fee: \(feeText)
+        """
+    }
 }
 
 // MARK: - Domain Mapping
