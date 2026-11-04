@@ -5,12 +5,21 @@ struct AppTopBar: View {
 
     @Environment(\.openProfile) private var openProfile
     @Environment(\.userDetails) private var userDetails
+    @EnvironmentObject private var networkMonitor: NetworkMonitor
 
     var body: some View {
         ZStack {
-            Text("SwiftPay")
-                .font(Theme.Typography.headlineSmall)
-                .foregroundStyle(Theme.Colors.primary)
+            VStack(spacing: 1) {
+                Text("SwiftPay")
+                    .font(Theme.Typography.headlineSmall)
+                    .foregroundStyle(Theme.Colors.primary)
+
+                if !networkMonitor.isConnected {
+                    Text("No Internet!")
+                        .font(Theme.Typography.labelSmall)
+                        .foregroundStyle(Theme.Colors.error)
+                }
+            }
 
             HStack {
                 profileButton
@@ -76,4 +85,5 @@ struct AppTopBar: View {
 #Preview {
     AppTopBar()
         .environment(\.userDetails, UserDetailsViewModel.preview)
+        .environmentObject(NetworkMonitor())
 }

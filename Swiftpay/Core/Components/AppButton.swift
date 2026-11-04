@@ -47,7 +47,7 @@ struct AppButton: View {
     }
 }
 
-private struct AppButtonStyle: ButtonStyle {
+struct AppButtonStyle: ButtonStyle {
     var style: AppButton.Style
     @Environment(\.isEnabled) private var isEnabled
 
