@@ -1,0 +1,450 @@
+{
+  "nextId": 1364,
+  "transactions": [
+    {
+      "id": "TXN0001361",
+      "type": "debit",
+      "amount": 10,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-11-04T01:59:14.829Z",
+      "fee": 0,
+      "totalAmount": 10,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Sai Teja",
+        "mobileNumber": "6281745496",
+        "upiId": "sai@ybl"
+      }
+    },
+    {
+      "id": "TXN0001331",
+      "type": "debit",
+      "amount": 200,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-11-03T13:57:49.250Z",
+      "fee": 0,
+      "totalAmount": 200,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Sai Teja",
+        "mobileNumber": "6281745496",
+        "upiId": "sai@gmail.com"
+      }
+    },
+    {
+      "id": "TXN0001325",
+      "type": "debit",
+      "amount": 200,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-11-03T13:55:16.900Z",
+      "fee": 0,
+      "totalAmount": 200,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Sai Teja",
+        "mobileNumber": "6281745496",
+        "upiId": "sai@ybl.com"
+      }
+    },
+    {
+      "id": "TXN0001308",
+      "type": "debit",
+      "amount": 900,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-11-03T13:34:55.070Z",
+      "fee": 0,
+      "totalAmount": 900,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Test Sai",
+        "mobileNumber": "1234567890",
+        "upiId": "sai@test.com"
+      }
+    },
+    {
+      "id": "TXN0001290",
+      "type": "debit",
+      "amount": 100,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-11-03T13:28:05.154Z",
+      "fee": 0,
+      "totalAmount": 100,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Sai  test",
+        "mobileNumber": "6281745496",
+        "upiId": "sai@test.com"
+      }
+    },
+    {
+      "id": "TXN0001015",
+      "type": "debit",
+      "amount": 650,
+      "currency": "INR",
+      "status": "pending",
+      "timestamp": "2026-11-02T09:20:00.000Z",
+      "fee": 0,
+      "totalAmount": 650,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Swiggy",
+        "mobileNumber": "9988001122",
+        "upiId": "swiggy.orders@swiftpay"
+      }
+    },
+    {
+      "id": "TXN0001014",
+      "type": "credit",
+      "amount": 1800,
+      "currency": "INR",
+      "status": "pending",
+      "timestamp": "2026-11-02T06:05:00.000Z",
+      "fee": 0,
+      "totalAmount": 1800,
+      "ownerSide": "receiver",
+      "counterparty": {
+        "name": "Rahul Mehta",
+        "mobileNumber": "9810012345",
+        "upiId": "rahul.mehta@swiftpay"
+      }
+    },
+    {
+      "id": "TXN0001013",
+      "type": "debit",
+      "amount": 99999,
+      "currency": "INR",
+      "status": "cancelled",
+      "timestamp": "2026-11-01T18:00:00.000Z",
+      "fee": 0,
+      "totalAmount": 99999,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Amazon",
+        "mobileNumber": "9988776655",
+        "upiId": "amazon.orders@swiftpay"
+      },
+      "error": {
+        "code": "INSUFFICIENT_BALANCE",
+        "message": "Your wallet balance is insufficient for this transfer."
+      }
+    },
+    {
+      "id": "TXN1007",
+      "type": "debit",
+      "amount": 480,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-11-01T07:45:00.000Z",
+      "fee": 0,
+      "totalAmount": 480,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Swiggy",
+        "mobileNumber": "9988001122",
+        "upiId": "swiggy.orders@swiftpay"
+      }
+    },
+    {
+      "id": "TXN1006",
+      "type": "credit",
+      "amount": 2500,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-11-01T04:10:00.000Z",
+      "fee": 0,
+      "totalAmount": 2500,
+      "ownerSide": "receiver",
+      "counterparty": {
+        "name": "Rahul Mehta",
+        "mobileNumber": "9810012345",
+        "upiId": "rahul.mehta@swiftpay"
+      }
+    },
+    {
+      "id": "TXN1005",
+      "type": "debit",
+      "amount": 1200,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-10-31T13:35:00.000Z",
+      "fee": 0,
+      "totalAmount": 1200,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Neha Iyer",
+        "mobileNumber": "9820098765",
+        "upiId": "neha.iyer@swiftpay"
+      }
+    },
+    {
+      "id": "TXN1004",
+      "type": "debit",
+      "amount": 899,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-10-30T10:50:00.000Z",
+      "fee": 0,
+      "totalAmount": 899,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Amazon",
+        "mobileNumber": "9988776655",
+        "upiId": "amazon.orders@swiftpay"
+      }
+    },
+    {
+      "id": "TXN1003",
+      "type": "credit",
+      "amount": 1250,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-10-29T15:00:00.000Z",
+      "fee": 0,
+      "totalAmount": 1250,
+      "ownerSide": "receiver",
+      "counterparty": {
+        "name": "Rohan Verma",
+        "mobileNumber": "9845011122",
+        "upiId": "rohan.verma@swiftpay"
+      }
+    },
+    {
+      "id": "TXN1002",
+      "type": "debit",
+      "amount": 2140,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-10-27T10:15:00.000Z",
+      "fee": 0,
+      "totalAmount": 2140,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Tata Power",
+        "mobileNumber": "9922003344",
+        "upiId": "tata.power@swiftpay"
+      }
+    },
+    {
+      "id": "TXN1001",
+      "type": "debit",
+      "amount": 350,
+      "currency": "INR",
+      "status": "success",
+      "timestamp": "2026-10-24T03:50:00.000Z",
+      "fee": 0,
+      "totalAmount": 350,
+      "ownerSide": "sender",
+      "counterparty": {
+        "name": "Starbucks",
+        "mobileNumber": "9933445566",
+        "upiId": "starbucks.orders@swiftpay"
+      }
+    }
+  ],
+  "idempotency": {
+    "20DBF3FF-6913-4D45-8DE2-9A189F164D04": {
+      "status": 200,
+      "body": {
+        "success": true,
+        "message": "Transfer completed successfully",
+        "transaction": {
+          "id": "TXN0001290",
+          "type": "debit",
+          "amount": 100,
+          "currency": "INR",
+          "status": "success",
+          "timestamp": "2026-11-03T13:28:05.154Z",
+          "fee": 0,
+          "totalAmount": 100,
+          "senderDetails": {
+            "name": "Sai  Shashank",
+            "mobileNumber": "6281745498",
+            "upiId": "shashank.sai@swiftpay"
+          },
+          "receiverDetails": {
+            "name": "Sai  test",
+            "mobileNumber": "6281745496",
+            "upiId": "sai@test.com"
+          }
+        },
+        "wallet": {
+          "currency": "INR",
+          "previousBalance": 1000,
+          "newBalance": 900
+        }
+      },
+      "savedAt": "2026-11-03T13:28:05.154Z"
+    },
+    "DBE86A07-551F-4182-8232-772A2AEC1C65": {
+      "status": 422,
+      "body": {
+        "success": false,
+        "message": "Your wallet balance is insufficient for this transfer.",
+        "error": {
+          "code": "INSUFFICIENT_BALANCE",
+          "message": "Your wallet balance is insufficient for this transfer."
+        },
+        "wallet": {
+          "currency": "INR",
+          "previousBalance": 900,
+          "newBalance": 900
+        }
+      },
+      "savedAt": "2026-11-03T13:34:36.581Z"
+    },
+    "71348702-F91B-45A3-B49B-36731F42EA2B": {
+      "status": 422,
+      "body": {
+        "success": false,
+        "message": "Your wallet balance is insufficient for this transfer.",
+        "error": {
+          "code": "INSUFFICIENT_BALANCE",
+          "message": "Your wallet balance is insufficient for this transfer."
+        },
+        "wallet": {
+          "currency": "INR",
+          "previousBalance": 900,
+          "newBalance": 900
+        }
+      },
+      "savedAt": "2026-11-03T13:34:44.488Z"
+    },
+    "04371655-AB88-48BF-9CBF-641A90C0E6AA": {
+      "status": 200,
+      "body": {
+        "success": true,
+        "message": "Transfer completed successfully",
+        "transaction": {
+          "id": "TXN0001308",
+          "type": "debit",
+          "amount": 900,
+          "currency": "INR",
+          "status": "success",
+          "timestamp": "2026-11-03T13:34:55.070Z",
+          "fee": 0,
+          "totalAmount": 900,
+          "senderDetails": {
+            "name": "Sai  Shashank",
+            "mobileNumber": "6281745498",
+            "upiId": "shashank.sai@swiftpay"
+          },
+          "receiverDetails": {
+            "name": "Test Sai",
+            "mobileNumber": "1234567890",
+            "upiId": "sai@test.com"
+          }
+        },
+        "wallet": {
+          "currency": "INR",
+          "previousBalance": 900,
+          "newBalance": 0
+        }
+      },
+      "savedAt": "2026-11-03T13:34:55.071Z"
+    },
+    "23D3668D-0355-4009-A34C-C5A46BAEFA94": {
+      "status": 200,
+      "body": {
+        "success": true,
+        "message": "Transfer completed successfully",
+        "transaction": {
+          "id": "TXN0001325",
+          "type": "debit",
+          "amount": 200,
+          "currency": "INR",
+          "status": "success",
+          "timestamp": "2026-11-03T13:55:16.900Z",
+          "fee": 0,
+          "totalAmount": 200,
+          "senderDetails": {
+            "name": "Sai  Shashank",
+            "mobileNumber": "6281745498",
+            "upiId": "shashank.sai@swiftpay"
+          },
+          "receiverDetails": {
+            "name": "Sai Teja",
+            "mobileNumber": "6281745496",
+            "upiId": "sai@ybl.com"
+          }
+        },
+        "wallet": {
+          "currency": "INR",
+          "previousBalance": 1000,
+          "newBalance": 800
+        }
+      },
+      "savedAt": "2026-11-03T13:55:16.900Z"
+    },
+    "490647FF-F9FF-4E19-89B2-F42313112308": {
+      "status": 200,
+      "body": {
+        "success": true,
+        "message": "Transfer completed successfully",
+        "transaction": {
+          "id": "TXN0001331",
+          "type": "debit",
+          "amount": 200,
+          "currency": "INR",
+          "status": "success",
+          "timestamp": "2026-11-03T13:57:49.250Z",
+          "fee": 0,
+          "totalAmount": 200,
+          "senderDetails": {
+            "name": "Sai  Shashank",
+            "mobileNumber": "6281745498",
+            "upiId": "shashank.sai@swiftpay"
+          },
+          "receiverDetails": {
+            "name": "Sai Teja",
+            "mobileNumber": "6281745496",
+            "upiId": "sai@gmail.com"
+          }
+        },
+        "wallet": {
+          "currency": "INR",
+          "previousBalance": 800,
+          "newBalance": 600
+        }
+      },
+      "savedAt": "2026-11-03T13:57:49.250Z"
+    },
+    "9A693553-71DB-4B44-A5C4-E569ECC642CF": {
+      "status": 200,
+      "body": {
+        "success": true,
+        "message": "Transfer completed successfully",
+        "transaction": {
+          "id": "TXN0001361",
+          "type": "debit",
+          "amount": 10,
+          "currency": "INR",
+          "status": "success",
+          "timestamp": "2026-11-04T01:59:14.829Z",
+          "fee": 0,
+          "totalAmount": 10,
+          "senderDetails": {
+            "name": "Sai  Shashank",
+            "mobileNumber": "6281745498",
+            "upiId": "shashank.sai@swiftpay"
+          },
+          "receiverDetails": {
+            "name": "Sai Teja",
+            "mobileNumber": "6281745496",
+            "upiId": "sai@ybl"
+          }
+        },
+        "wallet": {
+          "currency": "INR",
+          "previousBalance": 600,
+          "newBalance": 590
+        }
+      },
+      "savedAt": "2026-11-04T01:59:14.829Z"
+    }
+  }
+}

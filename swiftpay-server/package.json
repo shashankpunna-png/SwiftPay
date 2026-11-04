@@ -1,0 +1,9 @@
+{
+  "name": "swiftpay-server",
+  "private": true,
+  "version": "1.0.0",
+  "description": "File-backed API for the SwiftPay wallet",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
