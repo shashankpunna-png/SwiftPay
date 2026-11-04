@@ -9,6 +9,7 @@ enum AppTab: Hashable {
 struct MainTabView: View {
     @State private var selectedTab = AppTab.home
     @State private var showProfile = false
+    @State private var transferResetToken = 0
     @Environment(\.userDetails) private var userDetails
     @Environment(\.createTransactionUseCase) private var createTransaction
     @EnvironmentObject private var transactions: TransactionsViewModel
@@ -35,6 +36,7 @@ struct MainTabView: View {
                         userDetails: userDetails,
                         transactions: transactions
                     )
+                    .id(transferResetToken)
                 } else {
                     ProgressView()
                 }
@@ -56,6 +58,10 @@ struct MainTabView: View {
         .tint(Theme.Colors.primary)
         .environment(\.openProfile) {
             showProfile = true
+        }
+        .environment(\.startNewTransfer) {
+            transferResetToken += 1
+            selectedTab = .transfer
         }
         .fullScreenCover(isPresented: $showProfile) {
             ProfileView()

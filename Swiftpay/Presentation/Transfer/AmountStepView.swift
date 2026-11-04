@@ -7,6 +7,8 @@ struct AmountStepView: View {
     @Binding var amountText: String
     var onProceed: () -> Void
 
+    var validationError: String? = nil
+
     @FocusState private var isAmountFocused: Bool
     @Environment(\.dismiss) private var dismiss
 
@@ -51,6 +53,13 @@ struct AmountStepView: View {
                 .font(.system(size: 48, weight: .bold))
                 .monospacedDigit()
                 .foregroundStyle(Theme.Colors.neutral)
+
+                if let validationError {
+                    Text(validationError)
+                        .font(Theme.Typography.bodySmall)
+                        .foregroundStyle(Theme.Colors.error)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
             .padding(Theme.Spacing.md)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -100,7 +109,7 @@ struct AmountStepView: View {
             result.removeFirst()
         }
 
-        return result.isEmpty ? "0" : result
+        return result
     }
 }
 

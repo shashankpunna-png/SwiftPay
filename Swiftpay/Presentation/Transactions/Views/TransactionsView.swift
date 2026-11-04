@@ -3,6 +3,7 @@ import SwiftUI
 
 struct TransactionsView: View {
     @Environment(\.userDetails) private var userDetails
+    @Environment(\.startNewTransfer) private var startNewTransfer
     @EnvironmentObject private var transactionsViewModel: TransactionsViewModel
 
     @State private var selectedTransaction: Transaction?
@@ -71,7 +72,11 @@ struct TransactionsView: View {
                 receipt: PaymentReceipt(
                     transaction: transaction,
                     accountDetail: userDetails?.user?.accountDetail ?? ""
-                )
+                ),
+                onSendAgain: {
+                    selectedTransaction = nil
+                    startNewTransfer()
+                }
             )
         }
         .sheet(isPresented: $isDateSheetPresented) {

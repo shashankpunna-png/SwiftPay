@@ -6,6 +6,8 @@ struct RecipientStepView: View {
     @Binding var upiID: String
     var onContinue: () -> Void
 
+    var validationError: String? = nil
+
     var body: some View {
         VStack(spacing: 0) {
             AppTopBar()
@@ -19,6 +21,12 @@ struct RecipientStepView: View {
                         .foregroundStyle(Theme.Colors.neutral)
 
                     AppTextField(title: "Name", placeholder: "Recipient name", text: $name)
+                    if let validationError {
+                        Text(validationError)
+                            .font(Theme.Typography.bodySmall)
+                            .foregroundStyle(Theme.Colors.error)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                     AppTextField(
                         title: "Mobile number",
                         placeholder: "10-digit mobile number",
@@ -26,6 +34,12 @@ struct RecipientStepView: View {
                         keyboard: .phonePad,
                         capitalization: .never
                     )
+                    if let validationError {
+                        Text(validationError)
+                            .font(Theme.Typography.bodySmall)
+                            .foregroundStyle(Theme.Colors.error)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                     AppTextField(
                         title: "UPI ID",
                         placeholder: "name@swiftpay",
@@ -33,6 +47,12 @@ struct RecipientStepView: View {
                         keyboard: .emailAddress,
                         capitalization: .never
                     )
+                    if let validationError {
+                        Text(validationError)
+                            .font(Theme.Typography.bodySmall)
+                            .foregroundStyle(Theme.Colors.error)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
 
                     AppButton(title: "Continue", action: onContinue)
                 }

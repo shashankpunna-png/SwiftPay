@@ -15,6 +15,7 @@ final class TransferViewModel: ObservableObject {
     // MARK: - UI State
 
     @Published private(set) var state: TransferState = .idle
+    @Published private(set) var validationError: String?
 
     // MARK: - Dependencies
 
@@ -130,5 +131,96 @@ final class TransferViewModel: ObservableObject {
             // A server error can happen after the payment was processed.
             return status >= 500
         }
+    }
+
+
+    func clearValidationError() {
+        validationError = nil
+    }
+
+    func validateRecipient(
+        name: String,
+        phone: String,
+        upiID: String
+    ) -> Bool {
+        validationError = nil
+
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            validationError = "Please enter recipient name."
+            return false
+        }
+
+        let digits = phone.filter(\.isNumber)
+
+        guard digits.count == 10 else {
+            validationError = "Please enter a valid 10-digit mobile number."
+            return false
+        }
+
+        guard isValidUPI(upiID) else {
+            validationError = "Please enter a valid UPI ID."
+            return false
+        }
+
+        return true
+    }
+
+    func validateAmount(
+        amountText: String,
+        walletBalance: Decimal
+    ) -> Bool {
+        validationError = nil
+
+        let trimmedAmount = amountText.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+
+        guard !trimmedAmount.isEmpty else {
+            validationError = "Please enter an amount."
+            return false
+        }
+
+        guard let amount = Decimal(
+            string: trimmedAmount,
+            locale: Locale(identifier: "en_US_POSIX")
+        ) else {
+            validationError = "Please enter a valid amount."
+            return false
+        }
+
+        guard amount > 0 else {
+            validationError = "Amount must be greater than ₹0."
+            return false
+        }
+
+        guard amount <= walletBalance else {
+            validationError = "Insufficient wallet balance."
+            return false
+        }
+
+        return true
+    }
+
+    private func isValidUPI(_ value: String) -> Bool {
+        let upi = value.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !upi.isEmpty,
+            !upi.contains(where: \.isWhitespace) else {
+            return false
+        }
+
+        let parts = upi.split(separator: "@", omittingEmptySubsequences: false)
+
+        guard parts.count == 2 else {
+            return false
+        }
+
+        return !parts[0].isEmpty && !parts[1].isEmpty
+    }
+
+    func resetForNewTransfer() {
+        validationError = nil
+        state = .idle
+        activeIdempotencyKey = nil
     }
 }

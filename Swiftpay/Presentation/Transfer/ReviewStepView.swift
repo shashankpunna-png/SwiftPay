@@ -10,6 +10,8 @@ struct ReviewStepView: View {
     var walletDetail = "Aarav Shah ••3210"
     var onConfirm: () -> Void = {}
 
+    var validationError: String? = nil
+
     @Environment(\.dismiss) private var dismiss
 
     private var total: Decimal { amount + fee }
@@ -61,6 +63,13 @@ struct ReviewStepView: View {
         .background(Theme.Colors.background)
         .toolbar(.hidden, for: .navigationBar)
         .safeAreaInset(edge: .bottom, spacing: 0) {
+
+            if let validationError {
+                Text(validationError)
+                    .font(Theme.Typography.bodySmall)
+                    .foregroundStyle(Theme.Colors.error)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
             HStack(spacing: Theme.Spacing.gutter) {
                 AppButton(title: "Back", systemImage: "chevron.left", style: .secondary) {
                     dismiss()

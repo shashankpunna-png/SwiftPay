@@ -5,6 +5,7 @@ struct HomeView: View {
     var onShowTransactions: () -> Void = {}
 
     @Environment(\.userDetails) private var userDetails
+    @Environment(\.startNewTransfer) private var startNewTransfer
     @EnvironmentObject private var transactionsViewModel: TransactionsViewModel
 
     @State private var selectedTransaction: Transaction?
@@ -68,11 +69,15 @@ struct HomeView: View {
         }
         .navigationDestination(item: $selectedTransaction) { transaction in
           TransactionDetailView(
-            receipt: PaymentReceipt(
-                transaction: transaction,
-                accountDetail: user?.accountDetail ?? ""
+                receipt: PaymentReceipt(
+                    transaction: transaction,
+                    accountDetail: user?.accountDetail ?? ""
+                ),
+                onSendAgain: {
+                    selectedTransaction = nil
+                    startNewTransfer()
+                }
             )
-         )
         }
     }
 

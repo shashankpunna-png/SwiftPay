@@ -3,7 +3,7 @@ import SwiftUI
 
 enum TransferRoute: Hashable {
     case amount
-    case review
+    case review(amountText: String)
     case processing
     case receipt
 }
@@ -16,7 +16,7 @@ struct TransferFlowView: View {
     @State private var name = ""
     @State private var phone = ""
     @State private var upiID = ""
-    @State private var amountText = "0"
+    @State private var amountText = ""
 
     @State private var showPaymentError = false
     @State private var paymentErrorMessage = ""
@@ -50,17 +50,46 @@ struct TransferFlowView: View {
         amount + fee
     }
 
+    private var walletBalance: Decimal {
+        userDetails?.user?.walletBalance ?? 0
+    }
+
+    private func resetTransferForm() {
+        name = ""
+        phone = ""
+        upiID = ""
+        amountText = ""
+
+        viewModel.clearValidationError()
+    }
+
+    private func startNewTransfer() {
+        resetTransferForm()
+        viewModel.resetForNewTransfer()
+        path.removeAll()
+    }
+
     var body: some View {
         NavigationStack(path: $path) {
             RecipientStepView(
                 name: $name,
                 phone: $phone,
-                upiID: $upiID
+                upiID: $upiID,
+                validationError: viewModel.validationError
             ) {
+                guard viewModel.validateRecipient(
+                    name: name,
+                    phone: phone,
+                    upiID: upiID
+                ) else {
+                    return
+                }
+
                 path.append(.amount)
             }
             .toolbar(.hidden, for: .navigationBar)
             .allowsSwipeBack(false)
+
             .navigationDestination(for: TransferRoute.self) { route in
 
                 switch route {
@@ -70,22 +99,51 @@ struct TransferFlowView: View {
                         name: name,
                         phone: phone,
                         upiID: upiID,
-                        amountText: $amountText
+                        amountText: $amountText,
+                        validationError: viewModel.validationError
                     ) {
-                        path.append(.review)
-                    }
-                    .allowsSwipeBack(false)
+                        guard viewModel.validateAmount(
+                            amountText: amountText,
+                            walletBalance: walletBalance
+                        ) else {
+                            return
+                        }
 
-                case .review:
+                        path.append(.review(amountText: amountText))
+                    }
+
+                case .review(let enteredAmountText):
+
+                    let reviewAmount = Decimal(
+                        string: enteredAmountText,
+                        locale: Locale(identifier: "en_US_POSIX")
+                    ) ?? 0
+
                     ReviewStepView(
-                        amount: amount,
+                        amount: reviewAmount,
                         recipientName: name,
                         recipientPhone: phone,
                         recipientUPI: upiID,
-                        walletDetail: userDetails?.user?.accountDetail ?? "",
-                        onConfirm: {
-                            path.append(.processing)
+                    walletDetail: userDetails?.user?.accountDetail ?? "",
+                    onConfirm: {
+                        guard viewModel.validateRecipient(
+                            name: name,
+                            phone: phone,
+                            upiID: upiID
+                        ) else {
+                            return
                         }
+
+                        guard viewModel.validateAmount(
+                            amountText: enteredAmountText,
+                            walletBalance: walletBalance
+                        ) else {
+                            return
+                        }
+
+                        path.append(.processing)
+                    },
+                    validationError: viewModel.validationError
                     )
                     .allowsSwipeBack(false)
 
@@ -100,14 +158,32 @@ struct TransferFlowView: View {
                         await processPayment()
                     }
                     .allowsSwipeBack(false)
+
                 case .receipt:
-                    if let receipt {
-                        TransactionDetailView(receipt: receipt)
-                    } else {
-                        ProgressView()
-                    }
+                      if let receipt {
+                            TransactionDetailView(
+                                receipt: receipt,
+                                onSendAgain: {
+                                    startNewTransfer()
+                                }
+                            )
+                        } else {
+                            ProgressView()
+                        }
                 }
             }
+        }
+        .onChange(of: name) { _, _ in
+            viewModel.clearValidationError()
+        }
+        .onChange(of: phone) { _, _ in
+            viewModel.clearValidationError()
+        }
+        .onChange(of: upiID) { _, _ in
+            viewModel.clearValidationError()
+        }
+        .onChange(of: amountText) { _, _ in
+            viewModel.clearValidationError()
         }
         .alert(
             "Payment status",
@@ -141,7 +217,12 @@ struct TransferFlowView: View {
                 return
             }
 
+            // Clear the previous transfer details.
+            resetTransferForm()
+
+            // Keep the receipt visible.
             path[index] = .receipt
+
             PaymentFeedback.playSuccess()
 
         case .failure(let message),

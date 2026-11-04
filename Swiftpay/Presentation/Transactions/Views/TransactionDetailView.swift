@@ -1,7 +1,9 @@
+
 import SwiftUI
 
 struct TransactionDetailView: View {
     let receipt: PaymentReceipt
+    let onSendAgain: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -15,8 +17,9 @@ struct TransactionDetailView: View {
                     HStack(spacing: Theme.Spacing.gutter) {
                         AppButton(
                             title: "Send again",
-                            systemImage: "arrow.clockwise"
-                        ) {}
+                            systemImage: "arrow.clockwise",
+                            action: onSendAgain
+                        )
 
                         AppButton(
                             title: "Share receipt",
