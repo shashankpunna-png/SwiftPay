@@ -14,6 +14,7 @@ struct SwiftpayApp: App {
     var body: some Scene {
         WindowGroup {
             SplashView()
+                .dismissKeyboardOnTap()
                 .environment(\.userDetails, container.userDetails)
                 .environment(\.createTransactionUseCase, container.createTransaction)
                 .environmentObject(container.transactions)
