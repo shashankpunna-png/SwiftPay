@@ -58,7 +58,8 @@ struct AmountStepView: View {
                     Text(validationError)
                         .font(Theme.Typography.bodySmall)
                         .foregroundStyle(Theme.Colors.error)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
             .padding(Theme.Spacing.md)
