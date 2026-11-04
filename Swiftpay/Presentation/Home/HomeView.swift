@@ -9,6 +9,8 @@ struct HomeView: View {
     @EnvironmentObject private var transactionsViewModel: TransactionsViewModel
 
     @State private var selectedTransaction: Transaction?
+    @State private var isBalanceHidden = false
+    @State private var didApplyInitialBalanceVisibility = false
 
     private var user: User? {
         userDetails?.user
@@ -31,7 +33,7 @@ struct HomeView: View {
 
                     BalanceCard(
                         amount: user?.formattedBalance ?? "₹0.00",
-                        isHidden: hidesBalance
+                        isHidden: $isBalanceHidden
                     )
                     .padding(.horizontal, Theme.Spacing.md)
                     .padding(.top, Theme.Spacing.sm)
@@ -67,6 +69,18 @@ struct HomeView: View {
         .task {
             await transactionsViewModel.load()
         }
+        .refreshable {
+            await transactionsViewModel.refreshFromRemote()
+            await userDetails?.load()
+        }
+        .onAppear {
+            guard !didApplyInitialBalanceVisibility else { return }
+            didApplyInitialBalanceVisibility = true
+            isBalanceHidden = !(userDetails?.showsBalanceOnLaunch ?? true)
+        }
+        .onChange(of: userDetails?.showsBalanceOnLaunch) { _, showsBalance in
+            isBalanceHidden = !(showsBalance ?? true)
+        }
         .navigationDestination(item: $selectedTransaction) { transaction in
           TransactionDetailView(
                 receipt: PaymentReceipt(
@@ -81,16 +95,6 @@ struct HomeView: View {
         }
     }
 
-    private var hidesBalance: Binding<Bool> {
-        Binding(
-            get: {
-                !(userDetails?.showsBalanceOnLaunch ?? true)
-            },
-            set: {
-                userDetails?.showsBalanceOnLaunch = !$0
-            }
-        )
-    }
 }
 
 // #Preview {

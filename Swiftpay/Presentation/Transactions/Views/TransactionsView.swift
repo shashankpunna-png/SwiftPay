@@ -63,6 +63,7 @@ struct TransactionsView: View {
             }
             .refreshable {
                 await transactionsViewModel.refreshFromRemote()
+                await userDetails?.load()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

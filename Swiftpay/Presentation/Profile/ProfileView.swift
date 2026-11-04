@@ -23,6 +23,7 @@ private struct ProfileForm: View {
     @State private var image: UIImage?
     @State private var photoFile: String?
     @State private var appliedUserID: String?
+    @State private var showSavedToast = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -117,6 +118,14 @@ private struct ProfileForm: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Theme.Colors.background)
+        .overlay(alignment: .top) {
+            if showSavedToast {
+                SavedToast()
+                    .padding(.top, 64)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: showSavedToast)
         .task {
             await model.load()
         }
@@ -243,9 +252,13 @@ private struct ProfileForm: View {
             upiId: upiID,
             photoFile: photoFile
         )
-        if saved, let user = model.user {
-            apply(user)
-        }
+        guard saved, let user = model.user else { return }
+
+        apply(user)
+        showSavedToast = true
+
+        try? await Task.sleep(for: .seconds(1.2))
+        dismiss()
     }
 
     private func detailLine(_ title: String, _ value: String) -> some View {
@@ -258,6 +271,31 @@ private struct ProfileForm: View {
                 .foregroundStyle(Theme.Colors.neutral)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct SavedToast: View {
+    var body: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(Theme.Colors.success)
+
+            Text("Profile details updated")
+                .font(Theme.Typography.labelLarge)
+                .foregroundStyle(Theme.Colors.neutral)
+        }
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm)
+        .background(
+            Theme.Colors.surface,
+            in: Capsule()
+        )
+        .overlay {
+            Capsule()
+                .stroke(Theme.Colors.border, lineWidth: 1)
+        }
+        .shadow(color: .black.opacity(0.08), radius: 8, y: 4)
     }
 }
 
